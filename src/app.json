@@ -1,0 +1,68 @@
+{
+  "pages": [
+    "pages/login/main",
+    "pages/index/main",
+    "pages/order/recordList/main",
+    "pages/order/add/main",
+    "pages/dictionary/main",
+    "pages/logs/main",
+    "pages/counter/main"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#999",
+    "backgroundColor": "#fafafa",
+    "selectedColor": "#333",
+    "borderStyle": "white",
+
+    "list": [{
+      "text": "首页",
+      "pagePath": "pages/index/main",
+      "iconPath": "static/tabs/home.png",
+      "selectedIconPath": "static/tabs/home-active.png"
+    }, {
+      "text": "订单",
+      "pagePath": "pages/logs/main",
+      "iconPath": "static/tabs/orders.png",
+      "selectedIconPath": "static/tabs/orders-active.png"
+    }],
+
+    "items": [{
+      "name": "首页",
+      "pagePath": "pages/index/main",
+      "icon": "static/tabs/home.png",
+      "activeIcon": "static/tabs/home-active.png"
+    }, {
+      "name": "订单",
+      "pagePath": "pages/logs/main",
+      "icon": "static/tabs/orders.png",
+      "activeIcon": "static/tabs/orders-active.png"
+    }],
+    "position": "bottom"
+  },
+  "usingComponents": {
+    "van-button": "/static/vant/button/index",
+    "van-field": "/static/vant/field/index",
+    "van-col": "/static/vant/col/index",
+    "van-row": "/static/vant/row/index",
+    "van-cell": "/static/vant/cell/index",
+    "van-nav-bar": "/static/vant/nav-bar/index",
+    "van-swipe-cell": "/static/vant/swipe-cell/index",
+    "van-dialog": "/static/vant/dialog/index",
+    "van-toast": "/static/vant/toast/index",
+    "van-tabs": "/static/vant/tabs/index",
+    "van-tab": "/static/vant/tab/index",
+    "van-uploader": "/static/vant/uploader/index",
+    "van-popup": "/static/vant/popup/index",
+    "van-picker": "/static/vant/picker/index",
+    "van-collapse": "/static/vant/collapse/index",
+    "van-collapse-item": "/static/vant/collapse-item/index",
+    "van-overlay": "/static/vant/overlay/index",
+    "van-empty": "/static/vant/empty/index"
+  }
+}
