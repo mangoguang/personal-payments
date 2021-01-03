@@ -171,7 +171,7 @@ export default {
           break
         case timeInterval.WEEK: {
           const temp = date.getDay()
-          startTime = sendDateTime(new Date(+new Date() - (temp - 1) * 86400000), 'yyyy-MM-dd')
+          startTime = sendDateTime(new Date(+new Date() - temp * 86400000), 'yyyy-MM-dd')
           break
         }
         case timeInterval.MONTH:
