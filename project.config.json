@@ -37,7 +37,7 @@
   },
   "miniprogramRoot": "dist/wx/",
   "compileType": "miniprogram",
-  "appid": "wx1801b4b83eb6e520",
+  "appid": "wx2779f0e4baf15731",
   "projectname": "personal-payments",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},

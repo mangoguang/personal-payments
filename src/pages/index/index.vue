@@ -3,6 +3,7 @@
 
     <!-- S 头部banner -->
     <van-col class="container">
+      <button v-if="!userInfo.name" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
       <van-row class="pay"><span>{{month}}</span>月•支出</van-row>
       <strong>66</strong>
       <van-col class="bottom">
@@ -81,8 +82,8 @@
 </template>
 
 <script>
-import { fetchPayInfo } from '@/api/users'
-import { timeInterval } from '@/utils/constants'
+import { fetchPayInfo, fetchGetUserInfoByCode, fetchCreateUserByCode } from '@/api/users'
+import { timeInterval, weappInfo } from '@/utils/constants'
 import { sendDateTime } from '@/utils/common'
 
 export default {
@@ -92,13 +93,16 @@ export default {
       month: 7,
       budget: 1000,
       payInfo: {},
-      timeInterval
+      jsCode: '',
+      timeInterval,
+      userInfo: {}
     }
   },
   onShow () {
     this.setData()
   },
   onLoad () {
+    this.login()
     wx.setNavigationBarTitle({
       title: '首页'
     })
@@ -126,6 +130,55 @@ export default {
     add () {
       wx.navigateTo({ url: '/pages/order/add/main' })
       // this.$router.push('/order-add')
+    },
+    login () {
+      wx.login({
+        async success (res) {
+          this.jsCode = res.code
+          const userInfo = await fetchGetUserInfoByCode(weappInfo.MANGOGUANG, res.code)
+          this.userInfo = userInfo
+        }
+      })
+    },
+    async getUserInfo () {
+      wx.checkSession({
+        success: () => {
+          // 查看是否授权
+          wx.getSetting({
+            success (res) {
+              if (res.authSetting['scope.userInfo']) {
+                // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+                wx.getUserInfo({
+                  async success (res) {
+                    console.log(11111222233333, this)
+                    const userInfo = res.userInfo
+                    const { nickName, avatarUrl, gender } = userInfo
+                    let params = {
+                      jsCode: this.jsCode,
+                      password: '',
+                      address: '',
+                      userName: userInfo.nickName,
+                      phone: '',
+                      nickName,
+                      avatarUrl,
+                      gender
+                    }
+                    const result = await fetchCreateUserByCode(params)
+                    console.log('创建用户：', result)
+                  }
+                })
+              } else {
+                console.log('无获取用户信息权限')
+              }
+            }
+          })
+        },
+        fail (err) {
+          console.log(2222222, err)
+          // session_key 已经失效，需要重新执行登录流程
+          // wx.login() // 重新登录
+        }
+      })
     }
   }
 }

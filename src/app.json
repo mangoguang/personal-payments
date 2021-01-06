@@ -1,12 +1,12 @@
 {
   "pages": [
-    "pages/login/main",
     "pages/index/main",
     "pages/order/recordList/main",
     "pages/order/add/main",
     "pages/dictionary/main",
     "pages/logs/main",
-    "pages/counter/main"
+    "pages/counter/main",
+    "pages/login/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
