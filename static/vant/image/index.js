@@ -1,22 +1,15 @@
-import { addUnit, isDef } from '../common/utils';
-import { VantComponent } from '../common/component';
-import { button } from '../mixins/button';
-import { openType } from '../mixins/open-type';
-const FIT_MODE_MAP = {
-  none: 'center',
-  fill: 'scaleToFill',
-  cover: 'aspectFill',
-  contain: 'aspectFit',
-  widthFix: 'widthFix',
-  heightFix: 'heightFix',
-};
-VantComponent({
-  mixins: [button, openType],
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var component_1 = require('../common/component');
+var button_1 = require('../mixins/button');
+var open_type_1 = require('../mixins/open-type');
+component_1.VantComponent({
+  mixins: [button_1.button, open_type_1.openType],
   classes: ['custom-class', 'loading-class', 'error-class', 'image-class'],
   props: {
     src: {
       type: String,
-      observer() {
+      observer: function () {
         this.setData({
           error: false,
           loading: true,
@@ -24,14 +17,8 @@ VantComponent({
       },
     },
     round: Boolean,
-    width: {
-      type: null,
-      observer: 'setStyle',
-    },
-    height: {
-      type: null,
-      observer: 'setStyle',
-    },
+    width: null,
+    height: null,
     radius: null,
     lazyLoad: Boolean,
     useErrorSlot: Boolean,
@@ -40,7 +27,6 @@ VantComponent({
     fit: {
       type: String,
       value: 'fill',
-      observer: 'setMode',
     },
     showError: {
       type: Boolean,
@@ -56,45 +42,21 @@ VantComponent({
     loading: true,
     viewStyle: '',
   },
-  mounted() {
-    this.setMode();
-    this.setStyle();
-  },
   methods: {
-    setMode() {
-      this.setData({
-        mode: FIT_MODE_MAP[this.data.fit],
-      });
-    },
-    setStyle() {
-      const { width, height, radius } = this.data;
-      let style = '';
-      if (isDef(width)) {
-        style += `width: ${addUnit(width)};`;
-      }
-      if (isDef(height)) {
-        style += `height: ${addUnit(height)};`;
-      }
-      if (isDef(radius)) {
-        style += 'overflow: hidden;';
-        style += `border-radius: ${addUnit(radius)};`;
-      }
-      this.setData({ viewStyle: style });
-    },
-    onLoad(event) {
+    onLoad: function (event) {
       this.setData({
         loading: false,
       });
       this.$emit('load', event.detail);
     },
-    onError(event) {
+    onError: function (event) {
       this.setData({
         loading: false,
         error: true,
       });
       this.$emit('error', event.detail);
     },
-    onClick(event) {
+    onClick: function (event) {
       this.$emit('click', event.detail);
     },
   },

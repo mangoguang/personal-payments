@@ -1,26 +1,15 @@
-export const basic = Behavior({
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.basic = void 0;
+exports.basic = Behavior({
   methods: {
-    $emit(...args) {
-      this.triggerEvent(...args);
+    $emit: function (name, detail, options) {
+      this.triggerEvent(name, detail, options);
     },
-    set(data, callback) {
+    set: function (data, callback) {
       this.setData(data, callback);
-      return new Promise((resolve) => wx.nextTick(resolve));
-    },
-    getRect(selector, all) {
-      return new Promise((resolve) => {
-        wx.createSelectorQuery()
-          .in(this)
-          [all ? 'selectAll' : 'select'](selector)
-          .boundingClientRect((rect) => {
-            if (all && Array.isArray(rect) && rect.length) {
-              resolve(rect);
-            }
-            if (!all && rect) {
-              resolve(rect);
-            }
-          })
-          .exec();
+      return new Promise(function (resolve) {
+        return wx.nextTick(resolve);
       });
     },
   },

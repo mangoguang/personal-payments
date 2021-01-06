@@ -1,6 +1,7 @@
-import { VantComponent } from '../common/component';
-import { addUnit } from '../common/utils';
-VantComponent({
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var component_1 = require('../common/component');
+component_1.VantComponent({
   relation: {
     name: 'grid-item',
     type: 'descendant',
@@ -44,20 +45,9 @@ VantComponent({
       observer: 'updateChildren',
     },
   },
-  data: {
-    viewStyle: '',
-  },
-  created() {
-    const { gutter } = this.data;
-    if (gutter) {
-      this.setData({
-        viewStyle: `padding-left: ${addUnit(gutter)}`,
-      });
-    }
-  },
   methods: {
-    updateChildren() {
-      this.children.forEach((child) => {
+    updateChildren: function () {
+      this.children.forEach(function (child) {
         child.updateStyle();
       });
     },

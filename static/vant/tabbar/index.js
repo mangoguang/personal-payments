@@ -1,14 +1,17 @@
-import { VantComponent } from '../common/component';
-VantComponent({
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var utils_1 = require('../common/utils');
+var component_1 = require('../common/component');
+component_1.VantComponent({
   relation: {
     name: 'tabbar-item',
     type: 'descendant',
     current: 'tabbar',
-    linked(target) {
+    linked: function (target) {
       target.parent = this;
       target.updateFromParent();
     },
-    unlinked() {
+    unlinked: function () {
       this.updateChildren();
     },
   },
@@ -28,6 +31,11 @@ VantComponent({
     fixed: {
       type: Boolean,
       value: true,
+      observer: 'setHeight',
+    },
+    placeholder: {
+      type: Boolean,
+      observer: 'setHeight',
     },
     border: {
       type: Boolean,
@@ -42,20 +50,29 @@ VantComponent({
       value: true,
     },
   },
+  data: {
+    height: 50,
+  },
   methods: {
-    updateChildren() {
-      const { children } = this;
+    updateChildren: function () {
+      var children = this.children;
       if (!Array.isArray(children) || !children.length) {
-        return Promise.resolve();
+        return;
       }
-      return Promise.all(children.map((child) => child.updateFromParent()));
+      children.forEach(function (child) {
+        return child.updateFromParent();
+      });
     },
-    onChange(child) {
-      const index = this.children.indexOf(child);
-      const active = child.data.name || index;
-      if (active !== this.data.active) {
-        this.$emit('change', active);
+    setHeight: function () {
+      var _this = this;
+      if (!this.data.fixed || !this.data.placeholder) {
+        return;
       }
+      wx.nextTick(function () {
+        utils_1.getRect(_this, '.van-tabbar').then(function (res) {
+          _this.setData({ height: res.height });
+        });
+      });
     },
   },
 });

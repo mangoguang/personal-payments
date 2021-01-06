@@ -154,13 +154,20 @@
       custom-style="height: 40%;"
       @close="isDatePickerShow = false"
     >
-      <van-datetime-picker
+      <!-- <van-datetime-picker
+        v-model="currentDate"
+        type="date"
+        title="选择年月日"
+        :min-date="new Date(2020, 0, 1)"
+        :max-date="new Date(2025, 10, 1)"
+      /> -->
+      <!-- <van-datetime-picker
         type="datetime"
         v-model="currentDate"
         @change="onChangeTime"
         @confirm="confirmTime"
         @cancel="cancel"
-      />
+      /> -->
     </van-popup>
     <!-- E 时间选择器 -->
 

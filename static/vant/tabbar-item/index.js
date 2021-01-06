@@ -1,10 +1,16 @@
-import { VantComponent } from '../common/component';
-VantComponent({
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var component_1 = require('../common/component');
+component_1.VantComponent({
   props: {
     info: null,
     name: null,
     icon: String,
     dot: Boolean,
+    iconPrefix: {
+      type: String,
+      value: 'van-icon',
+    },
   },
   relation: {
     name: 'tabbar',
@@ -15,22 +21,27 @@ VantComponent({
     active: false,
   },
   methods: {
-    onClick() {
-      if (this.parent) {
-        this.parent.onChange(this);
+    onClick: function () {
+      var parent = this.parent;
+      if (parent) {
+        var index = parent.children.indexOf(this);
+        var active = this.data.name || index;
+        if (active !== this.data.active) {
+          parent.$emit('change', active);
+        }
       }
       this.$emit('click');
     },
-    updateFromParent() {
-      const { parent } = this;
+    updateFromParent: function () {
+      var parent = this.parent;
       if (!parent) {
         return;
       }
-      const index = parent.children.indexOf(this);
-      const parentData = parent.data;
-      const { data } = this;
-      const active = (data.name || index) === parentData.active;
-      const patch = {};
+      var index = parent.children.indexOf(this);
+      var parentData = parent.data;
+      var data = this.data;
+      var active = (data.name || index) === parentData.active;
+      var patch = {};
       if (active !== data.active) {
         patch.active = active;
       }
@@ -40,9 +51,9 @@ VantComponent({
       if (parentData.inactiveColor !== data.inactiveColor) {
         patch.inactiveColor = parentData.inactiveColor;
       }
-      return Object.keys(patch).length > 0
-        ? this.set(patch)
-        : Promise.resolve();
+      if (Object.keys(patch).length > 0) {
+        this.setData(patch);
+      }
     },
   },
 });
