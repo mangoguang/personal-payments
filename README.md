@@ -1,16 +1,14 @@
 # personal-payments
 
 > 个人收支记录项目。
+ui框架采用vant，相关组件用法可查看vant官方网站：https://vant-contrib.gitee.io/vant-weapp/#/intro
 
 ## Build Setup
 
 ``` bash
-# 初始化项目
-vue init mpvue/mpvue-quickstart myproject
-cd myproject
 
 # 安装依赖
-yarn
+npm install 或 cnpm install
 
 # 开发时构建
 npm dev
