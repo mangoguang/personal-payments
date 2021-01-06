@@ -6,7 +6,8 @@
     "pages/dictionary/main",
     "pages/logs/main",
     "pages/counter/main",
-    "pages/login/main"
+    "pages/login/main",
+    "pages/accountBook/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -30,6 +31,11 @@
       "pagePath": "pages/logs/main",
       "iconPath": "static/tabs/orders.png",
       "selectedIconPath": "static/tabs/orders-active.png"
+    }, {
+      "text": "流水",
+      "pagePath": "pages/accountBook/main",
+      "iconPath": "static/tabs/account.png",
+      "selectedIconPath": "static/tabs/account-active.png"
     }],
 
     "items": [{
@@ -42,6 +48,11 @@
       "pagePath": "pages/logs/main",
       "icon": "static/tabs/orders.png",
       "activeIcon": "static/tabs/orders-active.png"
+    }, {
+      "text": "流水",
+      "pagePath": "pages/accountBook/main",
+      "iconPath": "static/tabs/account.png",
+      "selectedIconPath": "static/tabs/account-active.png"
     }],
     "position": "bottom"
   },
