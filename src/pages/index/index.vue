@@ -132,15 +132,24 @@ export default {
       // this.$router.push('/order-add')
     },
     login () {
-      wx.login({
-        async success (res) {
-          this.jsCode = res.code
-          const userInfo = await fetchGetUserInfoByCode(weappInfo.MANGOGUANG, res.code)
-          this.userInfo = userInfo
-        }
+      let promise = new Promise((resolve, reject) => {
+        wx.login({
+          async success (res) {
+            const userInfo = await fetchGetUserInfoByCode(weappInfo.MANGOGUANG, res.code)
+            console.log('获取用户信息----------------------', data)
+            resolve({res, userInfo})
+          }
+        })
       })
+      const data = await promise.then(res => {
+        console.log('获取用户信息----------------------', data)
+        return res
+      })
+      console.log('获取用户信息----------------------', data)
     },
     async getUserInfo () {
+      console.log(this.jsCode)
+      const jsCode = this.jsCode
       wx.checkSession({
         success: () => {
           // 查看是否授权
@@ -150,11 +159,11 @@ export default {
                 // 已经授权，可以直接调用 getUserInfo 获取头像昵称
                 wx.getUserInfo({
                   async success (res) {
-                    console.log(11111222233333, this)
+                    console.log(11111222233333, jsCode)
                     const userInfo = res.userInfo
                     const { nickName, avatarUrl, gender } = userInfo
                     let params = {
-                      jsCode: this.jsCode,
+                      jsCode: jsCode,
                       password: '',
                       address: '',
                       userName: userInfo.nickName,
