@@ -2,13 +2,13 @@
   <div class="home">
 
     <!-- S 头部banner -->
-    <van-col class="container">
-      <button v-if="!userInfo.name" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
+    <van-col class="container homePage">
+      <button class="btn" v-if="!userInfo.name" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
       <van-row class="pay"><span>{{month}}</span>月•支出</van-row>
-      <strong>66</strong>
+      <strong>666</strong>
       <van-col class="bottom">
         <van-row v-if="payInfo.monthQuota">本月可用<span class="pay-text"> {{payInfo.monthQuota - payInfo.monthPay}}</span></van-row>
-        <van-row v-else>预算<button>点此设置</button></van-row>
+        <van-row v-else>预算<button class="btn">点此设置</button></van-row>
         <van-row>本月收入<span class="income-text"> {{ payInfo.monthIncome }}</span></van-row>
       </van-col>
     </van-col>
@@ -25,8 +25,9 @@
         is-link
       >
         <van-row>
-          <span class="income-text">收入</span>/<span class="pay-text">支出</span>:
-          <span class="income-text">{{ payInfo.dayIncome || '0' }}</span>/<span class="pay-text">{{ payInfo.dayPay || '0' }}</span>
+          <!-- <span class="income-text">收入</span>/<span class="pay-text">支出</span>: -->
+          <div class="income-text">{{ payInfo.dayIncome || '0' }}</div>
+          <div class="pay-text">{{ payInfo.dayPay || '0' }}</div>
         </van-row>
       </van-cell>
       <!-- /今天 -->
@@ -39,8 +40,9 @@
         is-link
       >
         <van-row>
-          <span class="income-text">收入</span>/<span class="pay-text">支出</span>:
-          <span class="income-text">{{ payInfo.weekIncome || '0' }}</span>/<span class="pay-text">{{ payInfo.weekPay || '0'}}</span>
+          <!-- <span class="income-text">收入</span>/<span class="pay-text">支出</span>: -->
+          <div class="income-text">{{ payInfo.weekIncome || '0' }}</div>
+          <div class="pay-text">{{ payInfo.weekPay || '0'}}</div>
         </van-row>
       </van-cell>
       <!-- /本周 -->
@@ -53,8 +55,9 @@
         is-link
       >
         <van-row>
-          <span class="income-text">收入</span>/<span class="pay-text">支出</span>:
-          <span class="income-text">{{ payInfo.monthIncome || '0'}}</span>/<span class="pay-text">{{ payInfo.monthPay || '0'}}</span>
+          <!-- <span class="income-text">收入</span>/<span class="pay-text">支出</span>: -->
+          <div class="income-text">{{ payInfo.monthIncome || '0'}}</div>
+          <div class="pay-text">{{ payInfo.monthPay || '0'}}</div>
         </van-row>
       </van-cell>
       <!-- /本月 -->
@@ -67,8 +70,9 @@
         is-link
       >
         <van-row>
-          <span class="income-text">收入</span>/<span class="pay-text">支出</span>:
-          <span class="income-text">{{ payInfo.yearIncome || '0'}}</span>/<span class="pay-text">{{ payInfo.yearPay || '0'}}</span>
+          <!-- <span class="income-text">收入</span>/<span class="pay-text">支出</span>: -->
+          <div class="income-text">{{ payInfo.yearIncome || '0'}}</div>
+          <div class="pay-text">{{ payInfo.yearPay || '0'}}</div>
         </van-row>
       </van-cell>
       <!-- /今年 -->
@@ -131,7 +135,7 @@ export default {
       wx.navigateTo({ url: '/pages/order/add/main' })
       // this.$router.push('/order-add')
     },
-    login () {
+    async login () {
       let promise = new Promise((resolve, reject) => {
         wx.login({
           async success (res) {
@@ -198,7 +202,15 @@ export default {
   display: flex;
   flex-direction: column;
 }
+.homePage{
+  align-items: flex-start;
+}
 .container {
+  background:#ccc;
+  background-image:url('http://api.cucldk.com/bing.php?key=中国');
+  background-repeat: no-repeat;
+  background-size:100% 100%;
+  color:#fff;
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
@@ -207,15 +219,33 @@ export default {
   padding: 3vw 5vw;
   .pay {
     font-size: 12px;
-    color: #999;
+    // color: #999;
+    color: #fff;
   }
   strong {
     font-size: 32px;
-    color: #333;
+    // color: #333;
+    color: #fff;
   }
-  .bottom {
+  .btn{
+    background:none;
+    padding:0;
+    color:#fff;
+    display: inline-block;
+    &:after{
+      border:none;
+    }
+  }
+  >>>.bottom {
     font-size: 12px;
-    color: #999;
+    // color: #999;
+    color: #fff;
+  }
+}
+>>>.cell-group{
+  .van-cell__right-icon-wrap{
+    color:red;
+    height:48px;
   }
 }
 .add {

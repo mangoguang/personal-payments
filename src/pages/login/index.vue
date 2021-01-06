@@ -71,7 +71,7 @@ export default {
       this.password = event.mp.detail
     },
     async onSubmit () {
-      let data = await fetchLogin({ userName: this.account })
+      let data = await fetchLogin({ userName: this.account, password: this.password })
       wx.setStorageSync(localstorageKeys.TOKEN, `Bearer ${data.token}`)
       wx.switchTab({ url: '/pages/index/main' })
     }

@@ -1,7 +1,7 @@
 import axios, { wechatUpload } from '@/utils/axios'
 
 // 登录
-const fetchLogin = (params) => axios('get', `/login/${params.userName}`)
+const fetchLogin = (params) => axios('get', `/login/${params.userName}?password=${params.password}`)
 
 // 获取数据字典列表
 const fetchDictList = (dictType) => axios('get', `/v1/dict/list/${dictType}`)
