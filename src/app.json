@@ -74,6 +74,8 @@
     "van-collapse": "/static/vant/collapse/index",
     "van-collapse-item": "/static/vant/collapse-item/index",
     "van-overlay": "/static/vant/overlay/index",
-    "van-empty": "/static/vant/empty/index"
+    "van-empty": "/static/vant/empty/index",
+    "van-dropdown-menu": "/static/vant/dropdown-menu/index",
+    "van-dropdown-item": "/static/vant/dropdown-item/index"
   }
 }

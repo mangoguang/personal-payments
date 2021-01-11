@@ -5,11 +5,11 @@
         <div class="headWidow">
           <swiper-item class="headPage">
             <van-row class="surplus"><span>结余</span></van-row>
-            <van-row><strong>-1.00</strong></van-row>
+            <van-row><strong>{{ record.allIncome - record.allCustomer }}</strong></van-row>
             <van-row class="surplus" gutter="8">
-              <van-col><span>收入 1.00</span></van-col>
+              <van-col><span>收入 {{ record.allIncome }}</span></van-col>
               <van-col> | </van-col>
-              <van-col><span>支出 1.00</span></van-col>
+              <van-col><span>支出 {{ record.allCustomer }}</span></van-col>
             </van-row>
           </swiper-item>  
           <swiper-item class="headPage">
@@ -18,15 +18,69 @@
         </div>  
       </swiper> 
     </div>
+
     <div class="body">
-      <van-collapse :value="activeNames" @change="onChange">
-        <van-collapse-item title="有赞微商城" name="1">
-          提供多样店铺模板，快速搭建网上商城
-        </van-collapse-item>
-        <van-collapse-item title="有赞零售" name="2">
-          网店吸粉获客、会员分层营销、一机多种收款，告别经营低效和客户流失
+      <van-collapse accordion :border="false" :value="activeNames" @change="onChange($event,'0')">
+        <van-collapse-item name="1" class="custom-class">
+          <div slot="title" class="title">
+            <div class="title-year">{{ record.year }}年</div>
+            <div class="title-surplus">
+              <div class="surplus-show"><span class="surplus-big">{{ record.allIncome - record.allCustomer }}</span> 结余</div>
+              <div class="surplus-income">
+                <span class="coral">收入</span>{{ record.allIncome }}
+                <span class="endLine">|</span>
+              <span class="green">支出</span>{{ record.allCustomer }}</div>
+            </div>
+          </div>
+          <van-collapse 
+            accordion 
+            :border="false" 
+            v-for="(item,index) in record.detailed" 
+            :key="index"
+            :value="activeIndex === index ? '1': '0' "
+            @change="onChange($event,'11',index)"
+          >
+            <van-collapse-item name="1" class="subCustom-class">
+              <div slot="title">
+                <span class="subTitle-month">{{ item.month }}月</span>
+                <span>.2021</span>
+                <span class="subTitle-surplus">结余{{ item.expend }}</span>
+              </div>
+              <van-row
+                v-for="(value, i) in item.day"
+                :key="i"
+                class="subTitle-row"
+                gutter="10"
+              >
+                <van-col :span="3" :offset="2">
+                  <div class="day">{{ setDay[index][i].day }}</div>
+                  <div>{{ setDay[index][i].week }}</div>
+                </van-col>
+                <van-col :span="3">
+                  <image src="../../static/images/dinner.png" class="img"></image>
+                </van-col>
+                <van-col :span="10" :offset="1" class="dinner">
+                  <div>{{ value.type }}</div>
+                  <div>{{ setDay[index][i].time }}-{{ value.payment }}</div>
+                </van-col>
+                <van-col :span="3">
+                  <div class="green subTitle-text">{{ value.customer }} </div>
+                </van-col>
+              </van-row>         
+            </van-collapse-item>
+          </van-collapse>
         </van-collapse-item>
       </van-collapse>
+    </div>
+
+    <div class="tabs">
+      <van-dropdown-menu direction="up">
+        <van-dropdown-item :value="text1" :options="option1" @change="tabChange($event, 1)"/>
+        <van-dropdown-item :value="text2" :options="option2" @change="tabChange($event, 2)"/>
+        <van-dropdown-item :value="text3" :options="option3" @change="tabChange($event, 3)"/>
+        <van-dropdown-item :value="text4" :options="option4" @change="tabChange($event, 4)"/>
+        <van-dropdown-item :value="text5" :options="option5" @change="tabChange($event, 5)"/>
+      </van-dropdown-menu>
     </div>
   </div>
 </template>
@@ -35,27 +89,190 @@
 export default {
   data () {
     return {
-      activeNames: ['1']
+      record: {
+        year: '2021',
+        allIncome: '30', // 收益
+        allCustomer: '70', // 花费
+        detailed: [
+          {
+            month: '1',
+            expend: '-10',
+            income: '10', // 月收入
+            day: [
+              {
+                date: '2021-01-07 19:36',
+                customer: '15', // 花费
+                type: '早午晚餐', // 餐费类型
+                payment: '现金' // 支付方式
+              },
+              {
+                date: '2021-01-09 09:36',
+                customer: '5', // 花费
+                type: '早午晚餐', // 餐费类型
+                payment: '现金' // 支付方式
+              }
+            ]
+          },
+          {
+            month: '2',
+            expend: '-15',
+            income: '10', // 月收入
+            day: [
+              {
+                date: '2021-02-17 19:36',
+                customer: '15', // 花费
+                type: '早午晚餐', // 餐费类型
+                payment: '现金' // 支付方式
+              },
+              {
+                date: '2021-02-25 15:36',
+                customer: '10', // 花费
+                type: '早午晚餐', // 餐费类型
+                payment: '现金' // 支付方式
+              }
+            ]
+          },
+          {
+            month: '3',
+            expend: '-5',
+            income: '10', // 月收入
+            day: [
+              {
+                date: '2021-03-03 08:36',
+                customer: '15', // 花费
+                type: '早午晚餐', // 餐费类型
+                payment: '现金' // 支付方式
+              }
+            ]
+          }
+        ]
+      },
+      activeNames: '',
+      key: false,
+      activeIndex: '',
+      active: 0,
+      option1: [
+        { text: '时间', value: 'time' },
+        { text: '年', value: 'year' },
+        { text: '季', value: 'quarter' },
+        { text: '月', value: 'month' }
+      ],
+      option2: [
+        { text: '分类', value: 'sort' },
+        { text: '一级', value: 'one' },
+        { text: '二级', value: 'two' }
+      ],
+      option3: [
+        { text: '账户', value: 'account' }
+      ],
+      option4: [
+        { text: '项目', value: 'project' }
+      ],
+      option5: [
+        { text: '更多', value: 'more' },
+        { text: '成员', value: 'prople' },
+        { text: '商家', value: 'business' }
+      ],
+      text1: 'time',
+      text2: 'sort',
+      text3: 'account',
+      text4: 'project',
+      text5: 'more'
     }
   },
-  onChange (event) {
-    console.log(event)
-    this.setData({
-      activeNames: event.detail
-    })
+  computed: {
+    setVarible () {
+      const arr = {
+        Jan: 0,
+        Feb: 0,
+        Mar: 0,
+        Apr: 0,
+        May: 0,
+        June: 0,
+        July: 0,
+        Aug: 0,
+        Sep: 0,
+        Oct: 0,
+        Nov: 0,
+        Dec: 0
+      }
+      return arr
+    },
+    setDay () {
+      // const day = this.record.detailed.map(item => item.day).map(value => this.getRuler(value.date)[2])
+      const arr = this.record.detailed.map(item => item.day)
+      let list = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+      let day = []
+      arr.forEach(item => {
+        day.push([
+          ...item.map(value => {
+            return {
+              'day': this.getRuler(value.date)[2],
+              'time': this.getRuler(value.date)[3],
+              'week': list[new Date(value.date).getDay()]
+            }
+          })
+        ])
+      })
+      console.log('day', day)
+      return day
+    }
   },
   methods: {
-    chang (event) {
-      console.log(event)
-      this.activeNames = event.detail
+    getRuler (v) {
+      return v.replace(' ', ':').replace(':', '-').split('-')
+    },
+    onChange (event, type, index) {
+      console.log('index', index)
+      switch (type) {
+        case '0':
+          this.activeNames = event.mp.detail
+          break
+        case '11':
+          this.childName = event.mp.detail
+          if (this.activeIndex === index) {
+            this.activeIndex = ''
+            return
+          }
+          this.activeIndex = index
+          break
+      }
+    },
+    check (event) {
+      this.active = event.detail
+    },
+    tabChange (value, index) {
+      console.log('value', value.mp.detail)
+      if (index === 1) {
+        this.text1 = value.mp.detail
+        this.text2 = this.$options.data().text2
+        this.text5 = this.$options.data().text5
+      }
+      if (index === 2) {
+        this.text2 = value.mp.detail
+        this.text1 = this.$options.data().text1
+        this.text5 = this.$options.data().text5
+      }
+      if (index === 5) {
+        this.text5 = value.mp.detail
+        this.text1 = this.$options.data().text1
+        this.text2 = this.$options.data().text2
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+.img{
+  width:40px;
+  height:40px;
+}
+.big{
+  font-size:18px;
+}
 .accountBook{
-  background:#000;
+  background:rgb(49, 49, 49);
   color:#fff;
   min-height:100vh;
   >>>.head{
@@ -91,6 +308,81 @@ export default {
           .surplus{
             font-size: 12px;
           }
+        }
+      }
+    }
+  }
+  >>>.body {
+    .van-cell {
+      background:rgba(15, 15, 15, 0.5);
+      color:#fff;
+      &:after{
+        right:0;
+        left:0;
+        border-bottom: 0;
+      }
+    }
+    .van-collapse-item__content {
+      background:rgba(29, 28, 28, 0.5);
+      color:#fff;
+      padding:0;
+    }
+    .custom-class {
+      font-size: 16px;
+      .title{
+        display: flex;
+        .title-year {
+          font-size: 18px;
+          line-height: 40px;
+        }
+        .title-surplus {
+          margin-left: 20px;
+          .surplus-show{
+            font-size:12px;
+            height:20px;
+            .surplus-big{
+              font-size:16px;
+            }
+          }
+          .surplus-income{
+            font-size:12px;
+            height:20px;
+          }
+        }
+      }
+      .subCustom-class{
+        font-size:14px;
+        .subTitle-month{
+          font-size:18px;
+        }
+        .subTitle-surplus{
+          margin-left: 20px;
+        }
+      }
+      .subTitle-row{
+        font-size:12px;
+        .subTitle-text{
+          line-height:45px;
+          font-size:18px;
+        }
+        .day{
+          font-size:16px;
+        }
+        .van-col{
+        }
+      }
+    }
+  }
+  >>>.tabs{ //弹框组件
+    position: fixed;
+    bottom:0;
+    width:100vw;
+    .van-dropdown-menu{
+      background:rgba(15, 15, 15, 0.5);
+      .van-dropdown-menu__title{
+        color:#fff;
+        ._van-dropdown-item{
+          background:yellow;
         }
       }
     }

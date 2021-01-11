@@ -47,4 +47,16 @@ export default {
   -webkit-transition: width 2s;
   -o-transition: width 2s;
 }
+.green{
+  color:green;
+  margin-right:4px;
+}
+.coral{
+  color:coral;
+  margin-right:4px;
+  
+}
+.endLine{
+  margin:0 8px;
+}
 </style>
