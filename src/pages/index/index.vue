@@ -5,7 +5,7 @@
     <van-col class="container homePage">
       <button class="btn" v-if="!userInfo.userName" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
       <van-row class="pay"><span>{{month}}</span>月•支出</van-row>
-      <strong>666</strong>
+      <strong>{{payInfo.monthPay}}</strong>
       <van-col class="bottom">
         <van-row v-if="payInfo.monthQuota">本月可用<span class="pay-text"> {{payInfo.monthQuota - payInfo.monthPay}}</span></van-row>
         <van-row v-else>预算<button class="btn">点此设置</button></van-row>
@@ -87,7 +87,7 @@
 
 <script>
 import { fetchPayInfo, fetchGetUserInfoByCode, fetchCreateUserByCode } from '@/api/users'
-import { timeInterval, weappInfo } from '@/utils/constants'
+import { timeInterval, weappInfo, localstorageKeys } from '@/utils/constants'
 import { sendDateTime, uuid } from '@/utils/common'
 
 export default {
@@ -101,9 +101,6 @@ export default {
       timeInterval,
       userInfo: {}
     }
-  },
-  onShow () {
-    this.setData()
   },
   onLoad () {
     this.login()
@@ -122,6 +119,7 @@ export default {
       this.payInfo.weekScript = `${sendDateTime(new Date(+new Date() - (day * 24 * 60 * 60 * 1000)), 'MM月dd日')}-${sendDateTime(new Date(+new Date() + ((7 - day) * 24 * 60 * 60 * 1000)), 'MM月dd日')}`
       this.payInfo.monthScript = sendDateTime(date, 'yyyy年MM月')
       this.payInfo.yearScript = sendDateTime(date, 'yyyy')
+      console.log('=============================', this.payInfo)
       const temp = await fetchPayInfo()
       this.payInfo = { ...this.payInfo, ...temp }
     },
@@ -140,44 +138,54 @@ export default {
         wx.login({
           async success (res) {
             console.log('微信登陆成功', uuid(), res)
-            const userInfo = await fetchGetUserInfoByCode({weappName: weappInfo.MANGOGUANG, jsCode: res.code})
+            const userInfo = await fetchGetUserInfoByCode({weappName: weappInfo.MANGOGUANG, jsCode: res.code, uuid: uuid()})
+            wx.setStorageSync(localstorageKeys.TOKEN, `Bearer ${userInfo.token}`)
             resolve({res, userInfo})
+          },
+          fail (error) {
+            console.log('微信登陆失败：', error)
           }
         })
       })
       promise.then(res => {
         this.jsCode = res.res.code
         this.userInfo = res.userInfo
-        console.log('---------,', this.userInfo, this.jsCode)
+        // 初始化数据
+        this.setData()
       })
     },
     async getUserInfo () {
-      // const jsCode = this.jsCode
-      wx.checkSession({
-        success: () => {
-          // 查看是否授权
-          wx.getSetting({
-            success (res) {
-              if (res.authSetting['scope.userInfo']) {
-                // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-                wx.getUserInfo({
-                  async success (res) {
-                    const result = await fetchCreateUserByCode({ weappName: weappInfo.MANGOGUANG, ...res })
-                    console.log('创建用户：', result)
-                  }
-                })
-              } else {
-                console.log('无获取用户信息权限')
-              }
-            }
-          })
-        },
-        fail (err) {
-          console.log(2222222, err)
-          // session_key 已经失效，需要重新执行登录流程
-          // wx.login() // 重新登录
-        }
+      let jsCode = ''
+      // 登录获取jsCode
+      let getJsCodePromise = new Promise((resolve, reject) => {
+        wx.login({
+          async success (res) {
+            jsCode = res.code
+            resolve(jsCode)
+          }
+        })
       })
+      await getJsCodePromise
+      // 查看是否授权
+      let getUserInfoPromise = new Promise((resolve, reject) => {
+        wx.getSetting({
+          success (res) {
+            if (res.authSetting['scope.userInfo']) {
+              // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+              wx.getUserInfo({
+                async success (res) {
+                  console.log('登陆信心：', res)
+                  const userInfo = await fetchCreateUserByCode({ weappName: weappInfo.MANGOGUANG, jsCode, ...res })
+                  resolve(userInfo)
+                }
+              })
+            } else {
+              console.log('无获取用户信息权限')
+            }
+          }
+        })
+      })
+      await getUserInfoPromise
     }
   }
 }
