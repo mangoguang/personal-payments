@@ -3,7 +3,7 @@
 
     <!-- S 头部banner -->
     <van-col class="container homePage">
-      <button class="btn" v-if="!userInfo.name" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
+      <button class="btn" v-if="!userInfo.userName" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
       <van-row class="pay"><span>{{month}}</span>月•支出</van-row>
       <strong>666</strong>
       <van-col class="bottom">
@@ -88,7 +88,7 @@
 <script>
 import { fetchPayInfo, fetchGetUserInfoByCode, fetchCreateUserByCode } from '@/api/users'
 import { timeInterval, weappInfo } from '@/utils/constants'
-import { sendDateTime } from '@/utils/common'
+import { sendDateTime, uuid } from '@/utils/common'
 
 export default {
   data () {
@@ -139,21 +139,20 @@ export default {
       let promise = new Promise((resolve, reject) => {
         wx.login({
           async success (res) {
-            const userInfo = await fetchGetUserInfoByCode(weappInfo.MANGOGUANG, res.code)
-            console.log('获取用户信息----------------------', data)
+            console.log('微信登陆成功', uuid(), res)
+            const userInfo = await fetchGetUserInfoByCode({weappName: weappInfo.MANGOGUANG, jsCode: res.code})
             resolve({res, userInfo})
           }
         })
       })
-      const data = await promise.then(res => {
-        console.log('获取用户信息----------------------', data)
-        return res
+      promise.then(res => {
+        this.jsCode = res.res.code
+        this.userInfo = res.userInfo
+        console.log('---------,', this.userInfo, this.jsCode)
       })
-      console.log('获取用户信息----------------------', data)
     },
     async getUserInfo () {
-      console.log(this.jsCode)
-      const jsCode = this.jsCode
+      // const jsCode = this.jsCode
       wx.checkSession({
         success: () => {
           // 查看是否授权
@@ -163,20 +162,7 @@ export default {
                 // 已经授权，可以直接调用 getUserInfo 获取头像昵称
                 wx.getUserInfo({
                   async success (res) {
-                    console.log(11111222233333, jsCode)
-                    const userInfo = res.userInfo
-                    const { nickName, avatarUrl, gender } = userInfo
-                    let params = {
-                      jsCode: jsCode,
-                      password: '',
-                      address: '',
-                      userName: userInfo.nickName,
-                      phone: '',
-                      nickName,
-                      avatarUrl,
-                      gender
-                    }
-                    const result = await fetchCreateUserByCode(params)
+                    const result = await fetchCreateUserByCode({ weappName: weappInfo.MANGOGUANG, ...res })
                     console.log('创建用户：', result)
                   }
                 })

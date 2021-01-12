@@ -36,11 +36,7 @@ const orderType = {
 }
 
 const weappInfo = {
-  MANGOGUANG: {
-    name: 'MANGOGUANG',
-    appid: 'wx2779f0e4baf15731',
-    secret: '32238ee2ca0621a3aea5d8d91459ae31'
-  }
+  MANGOGUANG: 'MANGOGUANG'
 }
 
 export {

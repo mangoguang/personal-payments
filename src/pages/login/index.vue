@@ -29,7 +29,9 @@
 
 <script>
 import { localstorageKeys } from '@/utils/constants'
+import { uuid } from '@/utils/common'
 import { fetchLogin } from '@/api/common'
+import md5 from 'blueimp-md5'
 
 export default {
   data () {
@@ -71,7 +73,8 @@ export default {
       this.password = event.mp.detail
     },
     async onSubmit () {
-      let data = await fetchLogin({ userName: this.account, password: this.password })
+      const password = md5(this.password)
+      let data = await fetchLogin({ userName: this.account, password, uuid: uuid() })
       wx.setStorageSync(localstorageKeys.TOKEN, `Bearer ${data.token}`)
       wx.switchTab({ url: '/pages/index/main' })
     }
