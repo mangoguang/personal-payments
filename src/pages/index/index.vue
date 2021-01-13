@@ -132,6 +132,7 @@ export default {
       this.active = event
     },
     add () {
+      console.log('111')
       wx.navigateTo({ url: '/pages/order/add/main' })
       // this.$router.push('/order-add')
     },

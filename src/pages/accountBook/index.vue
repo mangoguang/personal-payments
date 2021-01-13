@@ -33,14 +33,13 @@
             </div>
           </div>
           <van-collapse 
-            accordion 
             :border="false" 
             v-for="(item,index) in record.detailed" 
             :key="index"
-            :value="activeIndex === index ? '1': '0' "
+            :value="activeIndex"
             @change="onChange($event,'11',index)"
           >
-            <van-collapse-item name="1" class="subCustom-class">
+            <van-collapse-item :name="index" class="subCustom-class">
               <div slot="title">
                 <span class="subTitle-month">{{ item.month }}月</span>
                 <span>.2021</span>
@@ -149,7 +148,7 @@ export default {
       },
       activeNames: '',
       key: false,
-      activeIndex: '',
+      activeIndex: ['1'],
       active: 0,
       option1: [
         { text: '时间', value: 'time' },
@@ -182,20 +181,7 @@ export default {
   },
   computed: {
     setVarible () {
-      const arr = {
-        Jan: 0,
-        Feb: 0,
-        Mar: 0,
-        Apr: 0,
-        May: 0,
-        June: 0,
-        July: 0,
-        Aug: 0,
-        Sep: 0,
-        Oct: 0,
-        Nov: 0,
-        Dec: 0
-      }
+      const arr = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
       return arr
     },
     setDay () {
@@ -203,16 +189,23 @@ export default {
       const arr = this.record.detailed.map(item => item.day)
       let list = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
       let day = []
-      arr.forEach(item => {
-        day.push([
-          ...item.map(value => {
-            return {
-              'day': this.getRuler(value.date)[2],
-              'time': this.getRuler(value.date)[3],
-              'week': list[new Date(value.date).getDay()]
-            }
-          })
-        ])
+      // arr.forEach(item => {
+      //   day.push([
+      //     ...item.map(value => {
+      //       return {
+      //         'day': this.getRuler(value.date)[2],
+      //         'time': this.getRuler(value.date)[3],
+      //         'week': list[new Date(value.date).getDay()]
+      //       }
+      //     })
+      //   ])
+      // })
+      day = arr.map(item => {
+        return item.map(chileItem => ({
+          'day': this.getRuler(chileItem.date)[2],
+          'time': this.getRuler(chileItem.date)[3],
+          'week': list[new Date(chileItem.date).getDay()]
+        }))
       })
       console.log('day', day)
       return day
@@ -223,18 +216,19 @@ export default {
       return v.replace(' ', ':').replace(':', '-').split('-')
     },
     onChange (event, type, index) {
-      console.log('index', index)
+      console.log('event', event)
       switch (type) {
         case '0':
           this.activeNames = event.mp.detail
           break
         case '11':
           this.childName = event.mp.detail
-          if (this.activeIndex === index) {
-            this.activeIndex = ''
-            return
-          }
-          this.activeIndex = index
+          // if (this.activeIndex === index) {
+          //   this.activeIndex = ''
+          //   return
+          // }
+          // this.activeIndex = index
+          this.activeIndex = event.mp.detail
           break
       }
     },
@@ -273,8 +267,11 @@ export default {
 }
 .accountBook{
   background:rgb(49, 49, 49);
+  // background:yellow;
   color:#fff;
-  min-height:100vh;
+  // min-height:91vh;
+  height:91vh;
+  overflow-y: scroll;
   >>>.head{
     background:#ccc;
     background-image:url('http://api.cucldk.com/bing.php?key=中国');
@@ -378,7 +375,7 @@ export default {
     bottom:0;
     width:100vw;
     .van-dropdown-menu{
-      background:rgba(15, 15, 15, 0.5);
+      background:rgba(49, 49, 49, 0.5);
       .van-dropdown-menu__title{
         color:#fff;
         ._van-dropdown-item{

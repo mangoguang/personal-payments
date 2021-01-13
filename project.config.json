@@ -54,6 +54,12 @@
         {
           "name": "pages/accountBook/main",
           "pathName": "pages/accountBook/main",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/accountBook/main",
+          "pathName": "pages/accountBook/main",
           "scene": null
         }
       ]
