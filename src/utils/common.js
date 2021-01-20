@@ -104,3 +104,59 @@ export const uuid = (len, radix) => {
 
   return uuid.join('')
 }
+
+/**
+ * 防抖动
+ * @param {function} fn 需要进行防抖的事件
+ * @param {number} delay 间隔时间
+ * @param {boolean} immediately 是否立即执行
+ * @return {function} 返回事件本身
+ */
+export const debounce = (fn, delay = 300, immediately = false) => {
+  let timer = null
+  let isImediately = immediately
+  return function () {
+    let _this = this
+    let args = arguments
+
+    if (timer) clearTimeout(timer)
+    if (isImediately) {
+      fn.apply(_this, args)
+      isImediately = false
+    } else {
+      timer = setTimeout(() => {
+        fn.apply(_this, args)
+        timer = null
+        isImediately = true
+      }, delay)
+    }
+  }
+}
+
+/**
+ * 节流
+ * @param {function} fn 需要进行节流的事件
+ * @param {number} delay 间隔时间
+ * @param {boolean} immediately 是否立即执行
+ * @param {function} cb 节流结束时的执行
+ * @return {function} 返回事件本身
+ */
+export const throttle = (fn, delay = 300, immediately = false, cb) => {
+  let timer = null
+  return function () {
+    if (immediately) {
+      fn.apply(this, arguments)
+      immediately = false
+      timer = setTimeout(() => {
+        immediately = true
+        cb && cb.apply(this, arguments)
+      }, delay)
+    } else {
+      if (timer) return
+      timer = setTimeout(() => {
+        fn.apply(this, arguments)
+        timer = null
+      }, delay)
+    }
+  }
+}

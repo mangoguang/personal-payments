@@ -53,6 +53,7 @@
     <!-- E 内容部分 -->
 
     <van-toast id="van-toast" />
+    <van-notify id="van-notify" />
 
   </div>
 </template>
@@ -62,6 +63,7 @@ import OrderAddForm from '@/components/order/AddForm'
 import { fetchAddOrder } from '@/api/order'
 import { fetchFileUpload } from '@/api/common'
 import Toast from '@/../static/vant/toast/toast'
+import Notify from '@/../static/vant/notify/notify'
 import { orderType } from '@/utils/constants'
 
 export default {
@@ -111,11 +113,12 @@ export default {
         const params = { ...this.payFormData, orderType: 0, imgUrl }
         fetchAddOrder(params).then(() => {
           this.key = true
-          Toast.success('新增成功！')
+          Notify({ type: 'success', message: '新增成功！' })
           setTimeout(() => {
             this.back()
           }, 600)
         }).catch(() => {
+          Notify({ type: 'warning', message: '新增失败！' })
           this.key = true
         })
       }

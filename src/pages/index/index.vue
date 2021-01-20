@@ -3,7 +3,7 @@
 
     <!-- S 头部banner -->
     <van-col class="container homePage">
-      <button class="btn" v-if="!userInfo.userName" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
+      <!-- <button class="btn" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button> -->
       <van-row class="pay"><span>{{month}}</span>月•支出</van-row>
       <strong>{{payInfo.monthPay}}</strong>
       <van-col class="bottom">
@@ -81,7 +81,6 @@
     <!-- E 时间区间列表 -->
 
     <van-button @click="add" size="normal" class="add" type="primary">记一笔</van-button>
-
   </div>
 </template>
 

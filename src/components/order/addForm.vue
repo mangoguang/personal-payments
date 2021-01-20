@@ -6,12 +6,10 @@
       <van-field
         type="number"
         maxlength="8"
-        :formatter="filterMoney"
-        format-trigger="onBlur"
         :value="money"
-        @change="inputChange"
+        @input="inputChange"
         placeholder="0.00"
-        :autofocus="true"
+        autofocus="true"
         size="lager"
         input-class="money-input"
       >
@@ -161,13 +159,13 @@
         :min-date="new Date(2020, 0, 1)"
         :max-date="new Date(2025, 10, 1)"
       /> -->
-      <!-- <van-datetime-picker
+      <van-datetime-picker
         type="datetime"
-        v-model="currentDate"
+        :value="currentDate"
         @change="onChangeTime"
         @confirm="confirmTime"
         @cancel="cancel"
-      /> -->
+      />
     </van-popup>
     <!-- E 时间选择器 -->
 
@@ -199,7 +197,7 @@ export default {
       classifyType: '',
       accountType: '',
       memberType: '',
-      currentDate: new Date(),
+      currentDate: +new Date(),
       remark: '',
       img: null,
       changeTime: sendDateTime(new Date(), 'yyyy-MM-dd hh:mm:ss'),
@@ -259,7 +257,8 @@ export default {
       this.img = null
     },
     inputChange (event) {
-      this.money = event.mp.detail
+      const value = event.mp.detail
+      this.money = value
     },
     remakeChange (event) {
       this.remark = event.mp.detail
@@ -339,11 +338,11 @@ export default {
     /**
      * 格式化输入金额
      */
-    filterMoney (value) {
-      if (!value) return ''
-      const num = +value
-      return num.toFixed(2)
-    },
+    // filterMoney (value) {
+    //   if (!value) return ''
+    //   const num = +value
+    //   return num.toFixed(2)
+    // },
     async afterRead (event) {
       this.uploadImg.push({ url: event.target.file.path, name: 'picture3' })
       // const res = await fetchFileUpload(event.target.file.path)
@@ -373,7 +372,8 @@ export default {
       // this.changeTime = `${value[0]}-${value[1]}-${value[2]} ${value[3]}:${value[4]}:00`
     },
     confirmTime (date) {
-      this.changeTime = sendDateTime(date, 'yyyy-MM-dd hh:mm:ss')
+      console.log(date)
+      this.changeTime = sendDateTime(date.mp.detail, 'yyyy-MM-dd hh:mm:ss')
       this.isDatePickerShow = false
     },
     cancel () {
