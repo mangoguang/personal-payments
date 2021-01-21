@@ -23,6 +23,7 @@
 
     <van-dialog id="van-dialog" />
     <van-toast id="van-toast" />
+    <van-notify id="van-notify" />
 
   </div>
 </template>
@@ -30,6 +31,7 @@
 <script>
 import Dialog from '@/../static/vant/dialog/dialog'
 import Toast from '@/../static/vant/toast/toast'
+import Notify from '@/../static/vant/notify/notify'
 import orderList from '@/components/order/orderList'
 import { timeInterval } from '@/utils/constants'
 import { sendDateTime } from '@/utils/common'
@@ -105,7 +107,7 @@ export default {
       arr.splice(0, 1)
       this.isLoadingShow = true
       fetchDelOrder(id).then(() => {
-        Toast.success('删除成功！')
+        Notify({ type: 'success', message: '删除成功！' })
         // 循环遍历，删除对用下标元素
         this.dayList.find((item, index) => {
           if (index === indexArr[0]) {

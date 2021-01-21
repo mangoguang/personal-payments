@@ -3,7 +3,17 @@
 
     <!-- S 头部banner -->
     <van-col class="container homePage">
-      <!-- <button class="btn" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button> -->
+      <!-- 用户微信头像 -->
+      <van-row v-if="userInfo.userName">
+        <van-image
+          round
+          width="16vw"
+          height="16vw"
+          :src="headerImgUrl"
+        />
+        <p class="name">{{userInfo.userName}}</p>
+      </van-row>
+      <button v-else class="btn" open-type="getUserInfo" @getuserinfo="getUserInfo">登陆</button>
       <van-row class="pay"><span>{{month}}</span>月•支出</van-row>
       <strong>{{payInfo.monthPay}}</strong>
       <van-col class="bottom">
@@ -81,6 +91,10 @@
     <!-- E 时间区间列表 -->
 
     <van-button @click="add" size="normal" class="add" type="primary">记一笔</van-button>
+
+    <van-overlay :show="isLoadingShow" @click="hideLoading" class-name="loadingOverlay"><van-loading type="spinner" /></van-overlay>
+    <van-overlay :show="isLoginLoadingShow" @click="hideLoading" class-name="loadingOverlay"><van-loading type="spinner" />登陆中...</van-overlay>
+    <van-notify id="van-notify" />
   </div>
 </template>
 
@@ -88,6 +102,7 @@
 import { fetchPayInfo, fetchGetUserInfoByCode, fetchCreateUserByCode } from '@/api/users'
 import { timeInterval, weappInfo, localstorageKeys } from '@/utils/constants'
 import { sendDateTime, uuid } from '@/utils/common'
+import Notify from '@/../static/vant/notify/notify'
 
 export default {
   data () {
@@ -98,14 +113,35 @@ export default {
       payInfo: {},
       jsCode: '',
       timeInterval,
-      userInfo: {}
+      userInfo: {},
+      headerImgUrl: '',
+      isLoadingShow: true,
+      isLoginLoadingShow: false
     }
   },
-  onLoad () {
-    this.login()
+  async onLoad () {
+    this.isLoadingShow = true
     wx.setNavigationBarTitle({
       title: '首页'
     })
+    await this.login()
+    // 初始化数据
+    this.setData()
+  },
+  onShow () {
+    // 初始化数据
+    this.setData()
+  },
+  // 下拉刷新事件
+  onPullDownRefresh () {
+    this.isLoadingShow = true
+    // 初始化数据
+    this.setData()
+    // 解决下刷新不自动返回的问题
+    wx.stopPullDownRefresh()
+  },
+  onShareAppMessage: function () {
+
   },
   methods: {
     /**
@@ -118,9 +154,13 @@ export default {
       this.payInfo.weekScript = `${sendDateTime(new Date(+new Date() - (day * 24 * 60 * 60 * 1000)), 'MM月dd日')}-${sendDateTime(new Date(+new Date() + ((7 - day) * 24 * 60 * 60 * 1000)), 'MM月dd日')}`
       this.payInfo.monthScript = sendDateTime(date, 'yyyy年MM月')
       this.payInfo.yearScript = sendDateTime(date, 'yyyy')
-      console.log('=============================', this.payInfo)
-      const temp = await fetchPayInfo()
-      this.payInfo = { ...this.payInfo, ...temp }
+      fetchPayInfo().then(res => {
+        for (let item in res) {
+          if (typeof res[item] === 'number') res[item] = res[item].toFixed(2)
+        }
+        this.payInfo = { ...this.payInfo, ...res }
+        this.isLoadingShow = false
+      }).catch(() => this.isLoadingShow = false)
     },
     toRecordList (timeInterval) {
       wx.navigateTo({ url: `/pages/order/recordList/main?timeInterval=${timeInterval}` })
@@ -129,31 +169,33 @@ export default {
       this.active = event
     },
     add () {
+      if (!this.userInfo.userName) return Notify({ type: 'warning', message: '请登陆！' })
       wx.navigateTo({ url: '/pages/order/add/main' })
-      // this.$router.push('/order-add')
     },
     async login () {
+      let _this = this
       let promise = new Promise((resolve, reject) => {
         wx.login({
           async success (res) {
-            console.log('微信登陆成功', uuid(), res)
             const userInfo = await fetchGetUserInfoByCode({weappName: weappInfo.MANGOGUANG, jsCode: res.code, uuid: uuid()})
             wx.setStorageSync(localstorageKeys.TOKEN, `Bearer ${userInfo.token}`)
+            _this.headerImgUrl = userInfo.avatarUrl
             resolve({res, userInfo})
           },
-          fail (error) {
-            console.log('微信登陆失败：', error)
+          fail () {
+            _this.isLoadingShow = false
+            // Notify({ type: 'success', message: '登陆成功！' })
           }
         })
       })
       promise.then(res => {
         this.jsCode = res.res.code
         this.userInfo = res.userInfo
-        // 初始化数据
-        this.setData()
-      })
+      }).catch(() => this.isLoadingShow = false)
     },
     async getUserInfo () {
+      let _this = this
+      this.isLoginLoadingShow = true
       let jsCode = ''
       // 登录获取jsCode
       let getJsCodePromise = new Promise((resolve, reject) => {
@@ -161,6 +203,9 @@ export default {
           async success (res) {
             jsCode = res.code
             resolve(jsCode)
+          },
+          fail () {
+            _this.isLoginLoadingShow = false
           }
         })
       })
@@ -173,7 +218,6 @@ export default {
               // 已经授权，可以直接调用 getUserInfo 获取头像昵称
               wx.getUserInfo({
                 async success (res) {
-                  console.log('登陆信心：', res)
                   const userInfo = await fetchCreateUserByCode({ weappName: weappInfo.MANGOGUANG, jsCode, ...res })
                   resolve(userInfo)
                 }
@@ -185,12 +229,24 @@ export default {
         })
       })
       await getUserInfoPromise
+      this.isLoginLoadingShow = false
+      this.login()
+    },
+    hideLoading () {
+      this.isLoadingShow = false
+      this.isLoginLoadingShow = false
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+/deep/ ._van-loading {
+  position: absolute;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+}
 .home {
   display: flex;
   flex-direction: column;
@@ -210,7 +266,18 @@ export default {
   width: 100vw;
   height: 52vw;
   padding: 3vw 5vw;
+  .name {
+    width: 16vw;
+    text-align: center;
+    line-height: 1em;
+    padding-bottom: 5px;
+    font-size: 16px;
+    // color: #999;
+    color: #fff;
+  }
   .pay {
+    width: 16vw;
+    text-align: center;
     font-size: 12px;
     // color: #999;
     color: #fff;

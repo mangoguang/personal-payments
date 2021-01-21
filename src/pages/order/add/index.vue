@@ -166,14 +166,13 @@ export default {
     },
     onClick (event) {
       this.orderType = event.target.name
-    },
-    async upload () {
-      const file = this.$refs.fileid.files[0]
-      const formData = new FormData()
-      formData.append('file', file)
-      const res = await fetchFileUpload(formData)
-      console.log(res)
     }
+    // async upload () {
+    //   const file = this.$refs.fileid.files[0]
+    //   const formData = new FormData()
+    //   formData.append('file', file)
+    //   const res = await fetchFileUpload(formData)
+    // }
   }
 }
 </script>

@@ -18,6 +18,7 @@
           accept="image"
           @afterRead="afterRead"
           @oversize="oversize"
+          @delete="deleteImg"
           :file-list="uploadImg"
           :deletable="true"
           preview-size="38px"
@@ -200,7 +201,7 @@ export default {
       currentDate: +new Date(),
       remark: '',
       img: null,
-      changeTime: sendDateTime(new Date(), 'yyyy-MM-dd hh:mm:ss'),
+      changeTime: sendDateTime(new Date(), 'yyyy/MM/dd hh:mm:ss'),
       classifyTypeData: [],
       accountTypeData: [],
       memberTypeData: [],
@@ -252,7 +253,7 @@ export default {
       this.classifyType = ''
       this.accountType = ''
       this.memberType = ''
-      this.currentDate = new Date()
+      this.currentDate = +new Date()
       this.remark = ''
       this.img = null
     },
@@ -344,13 +345,19 @@ export default {
     //   return num.toFixed(2)
     // },
     async afterRead (event) {
-      this.uploadImg.push({ url: event.target.file.path, name: 'picture3' })
-      // const res = await fetchFileUpload(event.target.file.path)
+      const imgUrl = event.target.file.url
+      this.uploadImg.push({ url: imgUrl, name: 'picture' })
+      // const res = await fetchFileUpload(imgUrl)
       // this.img = JSON.parse(res.data).data.url
-      this.img = event.target.file.path
+      this.img = imgUrl
     },
     oversize () {
       Toast.fail('上传图片不能超过1M')
+    },
+    deleteImg (e) {
+      const index = e.mp.detail.index
+      this.img = null
+      this.uploadImg.splice(index, 1)
     },
     onClose () {
       this.isClassifyTypePickerShow = false
@@ -372,8 +379,7 @@ export default {
       // this.changeTime = `${value[0]}-${value[1]}-${value[2]} ${value[3]}:${value[4]}:00`
     },
     confirmTime (date) {
-      console.log(date)
-      this.changeTime = sendDateTime(date.mp.detail, 'yyyy-MM-dd hh:mm:ss')
+      this.changeTime = sendDateTime(date.mp.detail, 'yyyy/MM/dd hh:mm:ss')
       this.isDatePickerShow = false
     },
     cancel () {
@@ -395,7 +401,6 @@ export default {
       this.isMemberTypePickerShow = false
     },
     addSelect (dictType) {
-      console.log('dictType:', dictType)
       wx.navigateTo({ url: `/pages/dictionary/main?dictType=${dictType}` })
     }
   }

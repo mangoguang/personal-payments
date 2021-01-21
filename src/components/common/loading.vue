@@ -1,7 +1,5 @@
 <template>
-  <van-overlay class="loading-container" :show="show">
-    <van-loading type="spinner" color="#1989fa" />
-  </van-overlay>
+  <van-overlay :show="show" @click="hideLoading"><van-loading type="spinner" /></van-overlay>
 </template>
 
 <script>
@@ -10,17 +8,23 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false
+      default: true,
+      require: true
+    }
+  },
+  methods: {
+    hideLoading () {
+
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.loading-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, .01);
+/deep/ ._van-loading {
+  position: absolute;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%,-50%);
 }
 </style>

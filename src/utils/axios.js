@@ -6,8 +6,8 @@ import { localstorageKeys } from '@/utils/constants'
 Vue.use(Toast)
 
 axios.defaults.timeout = 60000 * 1 // 请求超时时间，默认5分钟
-const API = 'http://localhost:7002/api'
-// const API = 'https://mangoguang.cn/api'
+// const API = 'http://localhost:7002/api'
+const API = 'https://mangoguang.cn/api'
 // let baseLoadingConfig = {
 //   lock: true,
 //   fullscreen: true,
