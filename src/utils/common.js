@@ -4,18 +4,17 @@
  * @param {*} fmt 显示格式
  * reutrn fmt时间格式
  */
-export const sendDateTime = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
+export const sendDateTime = (date, fmt = 'yyyy/MM/dd hh:mm:ss') => {
   if (!date) return
   // if (fmt === 'yyyy-MM-dd') {
   //   date = `${dateFormat(date)} 23:59:59`
   // } else {
   //   date = dateFormat(date, 'yyyy-MM-dd hh:mm:ss')
   // }
-  date = dateFormat(date, 'yyyy-MM-dd hh:mm:ss')
+  date = dateFormat(date, 'yyyy/MM/dd hh:mm:ss')
   const timestamp = new Date(date).getTime()
   const zone = 8
   const timeDiff = (8 - zone) * 3600 * 1000
-  console.log('初始化数据')
   return dateFormat(timestamp + timeDiff, fmt)
 }
 
@@ -24,7 +23,7 @@ export const sendDateTime = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
  * @param {*} date 传入日期
  * @param {*} fmt 显示格式
  */
-export const dateFormat = (date, fmt = 'yyyy-MM-dd') => {
+export const dateFormat = (date, fmt = 'yyyy/MM/dd') => {
   if (!date) {
     return ''
   }

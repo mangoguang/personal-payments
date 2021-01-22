@@ -108,8 +108,7 @@ export default {
   data () {
     return {
       active: 'water',
-      month: 7,
-      budget: 1000,
+      month: new Date().getMonth() + 1,
       payInfo: {},
       jsCode: '',
       timeInterval,
