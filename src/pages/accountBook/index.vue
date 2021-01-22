@@ -189,17 +189,6 @@ export default {
       const arr = this.record.detailed.map(item => item.day)
       let list = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
       let day = []
-      // arr.forEach(item => {
-      //   day.push([
-      //     ...item.map(value => {
-      //       return {
-      //         'day': this.getRuler(value.date)[2],
-      //         'time': this.getRuler(value.date)[3],
-      //         'week': list[new Date(value.date).getDay()]
-      //       }
-      //     })
-      //   ])
-      // })
       day = arr.map(item => {
         return item.map(chileItem => ({
           'day': this.getRuler(chileItem.date)[2],
@@ -269,8 +258,7 @@ export default {
   background:rgb(49, 49, 49);
   // background:yellow;
   color:#fff;
-  // min-height:91vh;
-  height:91vh;
+  height:calc(100vh - 50Px);
   overflow-y: scroll;
   >>>.head{
     background:#ccc;

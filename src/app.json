@@ -7,7 +7,8 @@
     "pages/logs/main",
     "pages/counter/main",
     "pages/login/main",
-    "pages/accountBook/main"
+    "pages/accountBook/main",
+    "pages/table/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -36,6 +37,11 @@
       "pagePath": "pages/accountBook/main",
       "iconPath": "static/tabs/account.png",
       "selectedIconPath": "static/tabs/account-active.png"
+    },{
+      "text": "图表",
+      "pagePath": "pages/table/main",
+      "iconPath": "static/tabs/table.png",
+      "selectedIconPath": "static/tabs/table-active.png"      
     }],
 
     "items": [{
@@ -53,6 +59,11 @@
       "pagePath": "pages/accountBook/main",
       "iconPath": "static/tabs/account.png",
       "selectedIconPath": "static/tabs/account-active.png"
+    },{
+      "text": "图表",
+      "pagePath": "pages/table/main",
+      "iconPath": "static/tabs/table.png",
+      "selectedIconPath": "static/tabs/table-active.png"      
     }],
     "position": "bottom"
   },

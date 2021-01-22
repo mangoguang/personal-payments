@@ -9,7 +9,7 @@
     "minified": true,
     "newFeature": true,
     "coverView": true,
-    "nodeModules": false,
+    "nodeModules": true,
     "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
     "scopeDataCheck": false,
@@ -18,7 +18,7 @@
     "checkSiteMap": true,
     "uploadWithSourceMap": true,
     "compileHotReLoad": false,
-    "useMultiFrameRuntime": false,
+    "useMultiFrameRuntime": true,
     "useApiHook": true,
     "babelSetting": {
       "ignore": [],
@@ -29,9 +29,11 @@
     "useIsolateContext": true,
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
+    "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
     "packNpmRelationList": [],
-    "minifyWXSS": true
+    "minifyWXSS": true,
+    "useApiHostProcess": false
   },
   "miniprogramRoot": "dist/wx/",
   "compileType": "miniprogram",
@@ -60,6 +62,12 @@
         {
           "name": "pages/accountBook/main",
           "pathName": "pages/accountBook/main",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/table/main",
+          "pathName": "pages/table/main",
           "scene": null
         }
       ]
