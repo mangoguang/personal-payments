@@ -289,9 +289,6 @@ export default {
       this.$emit('getFormData', this.formData, value)
     }
   },
-  create () {
-    console.log(999999)
-  },
   onLoad () {
     this.setSelectData()
   },
