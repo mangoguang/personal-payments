@@ -40,8 +40,7 @@
             class="deleteBtn"
             square
             type="danger"
-            text="删除"
-          />
+          >删除</van-button>
         </van-swipe-cell>
         <!-- /二级分类列表 -->
 
@@ -61,8 +60,23 @@
     <!-- E 分类列表 -->
 
     <!-- S 新建数据字典弹框 -->
-    <van-overlay class="overlay" :show="show" @click="show = false">
-      <div class="wrapper" @click.stop>
+    <van-dialog
+      use-slot
+      title="新增分类"
+      :show="show"
+      show-cancel-button
+      @close="dialogCloseHandler"
+      @confirm="onSubmit"
+    >
+      <van-field
+        :value="name"
+        @change="inputChange"
+        label="分类名称"
+        placeholder="输入名称"
+      />
+    </van-dialog>
+    <!-- <van-overlay class="overlay" :show="show" @click.self="show = false">
+      <div class="wrapper">
         <div class="form-container">
           <van-field
             :value="name"
@@ -71,22 +85,24 @@
             placeholder="输入名称"
           />
           <div style="margin: 16px;">
-            <van-button @click="onSubmit" round block type="info" native-type="button">新增</van-button>
+            <van-button @click.stop="onSubmit" round block type="info" native-type="button">新增</van-button>
           </div>
         </div>
       </div>
-    </van-overlay>
+    </van-overlay> -->
     <!-- E 新建数据字典弹框 -->
 
-    <van-toast id="van-toast"/>
+    <van-dialog id="van-dialog" />
+    <van-notify id="van-notify" />
 
   </div>
 </template>
 
 <script>
+import Dialog from '@/../static/vant/dialog/dialog'
+import Notify from '@/../static/vant/notify/notify'
 import { fetchDictList, fetchAddDict, fetchDelDict } from '@/api/common'
-import { dictType, addDictTitle } from '@/utils/constants'
-import Toast from '@/../static/vant/toast/toast'
+import { addDictTitle } from '@/utils/constants'
 
 export default {
   name: 'OrderAdd',
@@ -98,10 +114,15 @@ export default {
       show: false,
       name: '',
       formData: null,
-      title: ''
+      title: '',
+      dictType: ''
     }
   },
   async onLoad (options) {
+    wx.setNavigationBarTitle({
+      title: '新增分类'
+    })
+    this.dictType = options.dictType
     this.list = await fetchDictList(options.dictType)
     this.title = addDictTitle[options.dictType]
   },
@@ -110,7 +131,6 @@ export default {
       this.activeName = event.mp.detail
     },
     inputChange (event) {
-      console.log(event.mp.detail)
       this.name = event.mp.detail
     },
     add (data) {
@@ -122,7 +142,7 @@ export default {
      * 确认新增
      */
     async onSubmit () {
-      if (!this.name) return Toast.fail('请输入名称')
+      if (!this.name) return Notify({ type: 'warning', message: '请输入名称!' })
       if (this.key) {
         this.key = false
         this.show = false
@@ -131,9 +151,10 @@ export default {
           fatherCode: this.formData.dictCode
         }
         fetchAddDict(params).then(async () => {
-          Toast.success('添加成功')
+          Notify({ type: 'success', message: '添加成功!' })
+          this.name = ''
           this.key = true
-          this.list = await fetchDictList(dictType.PAY_TYPE)
+          this.list = await fetchDictList(this.dictType)
         }).catch(error => {
           console.log('请求列表失败。', error)
           this.key = true
@@ -142,10 +163,18 @@ export default {
     },
 
     /**
+     * 取消新增分类
+     */
+    dialogCloseHandler () {
+      this.show = false
+      this.name = ''
+    },
+
+    /**
      * 删除代码字典
      */
     deleteDict (dictCode, indexArr) {
-      this.$dialog.confirm({
+      Dialog.confirm({
         title: '确定删除吗？'
       }).then(() => {
         this.deleteConfirm(dictCode, indexArr)
@@ -161,9 +190,8 @@ export default {
       if (this.key) {
         this.key = false
         fetchDelDict(dictCode).then(() => {
-          Toast.success('删除成功！')
+          Notify({ type: 'success', message: '删除成功！' })
           this.key = true
-          console.log(dictCode, indexArr)
           // 循环遍历，删除对用下标元素
           this.list.find((item, index) => {
             if (index === indexArr[0]) {

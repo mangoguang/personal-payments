@@ -13,14 +13,16 @@ const dictType = {
   PAY_TYPE: 'PAY_TYPE',
   INCOME_TYPE: 'INCOME_TYPE',
   ACCOUNT_TYPE: 'ACCOUNT_TYPE',
-  MEMBER_TYPE: 'MEMBER_TYPE'
+  MEMBER_TYPE: 'MEMBER_TYPE',
+  PROJECT_TYPE: 'PROJECT_TYPE'
 }
 
 const addDictTitle = {
   PAY_TYPE: '支出分类',
   INCOME_TYPE: '收入分类',
   ACCOUNT_TYPE: '账号',
-  MEMBER_TYPE: '成员'
+  MEMBER_TYPE: '成员',
+  PROJECT_TYPE: '项目'
 }
 
 const timeInterval = {

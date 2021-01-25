@@ -52,7 +52,6 @@
     </van-tabs>
     <!-- E 内容部分 -->
 
-    <van-toast id="van-toast" />
     <van-notify id="van-notify" />
 
   </div>
@@ -62,7 +61,6 @@
 import OrderAddForm from '@/components/order/AddForm'
 import { fetchAddOrder } from '@/api/order'
 import { fetchFileUpload } from '@/api/common'
-import Toast from '@/../static/vant/toast/toast'
 import Notify from '@/../static/vant/notify/notify'
 import { orderType } from '@/utils/constants'
 
@@ -99,7 +97,7 @@ export default {
         this.key = false
         if (!this.payFormData.money) {
           this.key = true
-          return Toast.fail('请输入金额')
+          return Notify({ type: 'warning', message: '请输入金额!' })
         }
 
         // 上传图片
@@ -128,9 +126,10 @@ export default {
      * 新增收入
      */
     async incomeSave () {
+      console.log(123123123123)
       if (this.key) {
         this.key = false
-        if (!this.incomeFormData.money) return Toast.fail('请输入金额')
+        if (!this.incomeFormData.money) return Notify({ type: 'warning', message: '请输入金额!' })
 
         // 上传图片
         let imgUrl = null
@@ -142,7 +141,7 @@ export default {
         const params = { ...this.incomeFormData, orderType: 1, imgUrl }
         fetchAddOrder(params).then(() => {
           this.key = true
-          Toast.success('新增成功！')
+          Notify({ type: 'success', message: '新增成功!' })
           setTimeout(() => {
             this.back()
           }, 600)

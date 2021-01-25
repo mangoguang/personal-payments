@@ -124,8 +124,6 @@ export default {
       title: '首页'
     })
     await this.login()
-    // 初始化数据
-    this.setData()
   },
   onShow () {
     // 初始化数据

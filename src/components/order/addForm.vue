@@ -77,6 +77,18 @@
       <!-- /成员选择列表 -->
 
       <van-field
+        :value="projectType[1]"
+        @click="selectProjectType"
+        label="项目"
+        label-width="36px"
+        is-link
+        clickable
+        readonly
+        left-icon="like-o"
+      />
+      <!-- /成员选择列表 -->
+
+      <van-field
         :value="remark"
         @change="remakeChange"
         label="备注"
@@ -96,7 +108,10 @@
       custom-style="height: 50%;"
       @close="isClassifyTypePickerShow = false"
     >
-      <span v-show="isclassifyTypeBtnShow" @click="() => orderType ? addSelect(dictType.INCOME_TYPE) : addSelect(dictType.PAY_TYPE)" class="add-select-btn">+ 添加分类</span>
+      <span v-show="isclassifyTypeBtnShow" @click="() => {
+        isClassifyTypePickerShow = false
+        orderType ? addSelect(dictType.INCOME_TYPE) : addSelect(dictType.PAY_TYPE)
+      }" class="add-select-btn">+ 添加分类</span>
       <van-picker
         show-toolbar
         :columns="classifyTypeColumns"
@@ -115,6 +130,10 @@
       custom-style="height: 40%;"
       @close="isAccountTypePickerShow = false"
     >
+      <span v-show="isaccountTypeBtnShow" @click="() => {
+        isAccountTypePickerShow = false
+        addSelect(dictType.ACCOUNT_TYPE)
+      }" class="add-select-btn">+ 添加账号</span>
       <van-picker
         show-toolbar
         :columns="accountTypeColumns"
@@ -122,7 +141,6 @@
         @cancel="isAccountTypePickerShow = false"
         @confirm="accountOnConfirm"
       >
-        <span v-show="isaccounttypeBtnShow" @click="() => addSelect(dictType.ACCOUNT_TYPE)" class="add-select-btn">+ 添加账号</span>
       </van-picker>
     </van-popup>
     <!-- E 账户类型选择器 -->
@@ -134,6 +152,10 @@
       custom-style="height: 40%;"
       @close="isMemberTypePickerShow = false"
     >
+      <span v-show="ismemberTypeBtnShow" @click="() => {
+        isMemberTypePickerShow = false
+        addSelect(dictType.MEMBER_TYPE)
+      }" class="add-select-btn">+ 添加成员</span>
       <van-picker
         show-toolbar
         :columns="memberTypeColumns"
@@ -141,10 +163,31 @@
         @cancel="isMemberTypePickerShow = false"
         @confirm="memberOnConfirm"
       >
-        <span v-show="isMemberBtnShow" @click="() => addSelect(dictType.MEMBER_TYPE)" class="add-select-btn">+ 添加成员</span>
       </van-picker>
     </van-popup>
     <!-- E 成员类型选择器 -->
+
+    <!-- S 项目类型选择器 -->
+    <van-popup
+      :show="isProjectTypePickerShow"
+      position="bottom"
+      custom-style="height: 40%;"
+      @close="isProjectTypePickerShow = false"
+    >
+      <span v-show="isprojectTypeBtnShow" @click="() => {
+        isProjectTypePickerShow = false
+        addSelect(dictType.PROJECT_TYPE)
+      }" class="add-select-btn">+ 添加项目</span>
+      <van-picker
+        show-toolbar
+        :columns="projectTypeColumns"
+        @change="(event) => { change('projectType', event) }"
+        @cancel="isProjectTypePickerShow = false"
+        @confirm="projectOnConfirm"
+      >
+      </van-picker>
+    </van-popup>
+    <!-- E 项目类型选择器 -->
 
     <!-- S 时间选择器 -->
     <van-popup
@@ -192,12 +235,14 @@ export default {
       isClassifyTypePickerShow: false,
       isAccountTypePickerShow: false,
       isMemberTypePickerShow: false,
+      isProjectTypePickerShow: false,
       isDatePickerShow: false,
       uploadImg: [],
       money: '',
       classifyType: '',
       accountType: '',
       memberType: '',
+      projectType: '',
       currentDate: +new Date(),
       remark: '',
       img: null,
@@ -208,12 +253,15 @@ export default {
       classifyTypeColumns: [],
       accountTypeColumns: [],
       memberTypeColumns: [],
+      projectTypeColumns: [],
       classifyTypeList: [],
       accountTypeList: [],
       memberTypeList: [],
+      projectTypeList: [],
       isclassifyTypeBtnShow: false,
-      isaccounttypeBtnShow: false,
-      ismemberTypeBtnShow: false
+      isaccountTypeBtnShow: false,
+      ismemberTypeBtnShow: false,
+      isprojectTypeBtnShow: false
     }
   },
   computed: {
@@ -221,11 +269,12 @@ export default {
       return `${this.classifyType[0]} < ${this.classifyType[1]}`
     },
     formData: function () {
-      const { money, classifyType, accountType, changeTime, memberType, remark } = this
+      const { money, classifyType, accountType, changeTime, memberType, projectType, remark } = this
       return {
         classifyType: classifyType[1],
         accountType: accountType[1],
         memberType: memberType[1],
+        projectType: projectType[1],
         date: changeTime,
         money,
         remark
@@ -240,10 +289,13 @@ export default {
       this.$emit('getFormData', this.formData, value)
     }
   },
+  create () {
+    console.log(999999)
+  },
   onLoad () {
     this.setSelectData()
   },
-  onUnload () {
+  onHide () {
     this.resetData()
   },
   methods: {
@@ -253,6 +305,7 @@ export default {
       this.classifyType = ''
       this.accountType = ''
       this.memberType = ''
+      this.projectType = ''
       this.currentDate = +new Date()
       this.remark = ''
       this.img = null
@@ -303,20 +356,29 @@ export default {
       this.classifyType = classifyTypeData.texts
       // 设置选择插件添加按钮的初始显示状态
       this.isclassifyTypeBtnShow = classifyTypeData.list[Object.keys(classifyTypeData.list)[0]].length <= 2
+      console.log(331133, classifyTypeData, this.classifyType, this.isclassifyTypeBtnShow)
 
       // 初始化账号选择插件数据
       const accountTypeData = await this.getDataList(dictType.ACCOUNT_TYPE)
       this.setData(accountTypeData, 'accountType')
       this.accountType = accountTypeData.texts
       // 设置选择插件添加按钮的初始显示状态
-      this.isaccounttypeBtnShow = accountTypeData.list[Object.keys(accountTypeData.list)[0]].length <= 2
+      this.isaccountTypeBtnShow = accountTypeData.list[Object.keys(accountTypeData.list)[0]].length <= 2
+      console.log(223311, accountTypeData, this.accountType, this.isaccountTypeBtnShow)
 
       // 初始化成员选择插件数据
       const memberTypeData = await this.getDataList(dictType.MEMBER_TYPE)
       this.setData(memberTypeData, 'memberType')
       this.memberType = []
-      // 设置选择插件添加按钮的初始显示状态
+      // 设置成员选择插件添加按钮的初始显示状态
       this.ismemberTypeBtnShow = memberTypeData.list[Object.keys(memberTypeData.list)[0]].length <= 2
+
+      // 初始化项目选择插件数据
+      const projectTypeData = await this.getDataList(dictType.PROJECT_TYPE)
+      this.setData(projectTypeData, 'projectType')
+      this.projectType = []
+      // 设置成员选择插件添加按钮的初始显示状态
+      this.isprojectTypeBtnShow = projectTypeData.list[Object.keys(projectTypeData.list)[0]].length <= 2
     },
     setData (data, name) {
       this[`${name}List`] = data.list
@@ -371,6 +433,9 @@ export default {
     selectMemberType () {
       this.isMemberTypePickerShow = true
     },
+    selectProjectType () {
+      this.isProjectTypePickerShow = true
+    },
     selectTime () {
       this.isDatePickerShow = true
     },
@@ -400,7 +465,13 @@ export default {
       this.memberType = value
       this.isMemberTypePickerShow = false
     },
+    projectOnConfirm (event) {
+      const { value } = event.target
+      this.projectType = value
+      this.isProjectTypePickerShow = false
+    },
     addSelect (dictType) {
+      console.log(11112222)
       wx.navigateTo({ url: `/pages/dictionary/main?dictType=${dictType}` })
     }
   }
