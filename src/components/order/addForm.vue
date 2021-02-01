@@ -299,8 +299,6 @@ export default {
     resetData () {
       this.uploadImg = []
       this.money = ''
-      this.classifyType = ''
-      this.accountType = ''
       this.memberType = ''
       this.projectType = ''
       this.currentDate = +new Date()
@@ -353,7 +351,6 @@ export default {
       this.classifyType = classifyTypeData.texts
       // 设置选择插件添加按钮的初始显示状态
       this.isclassifyTypeBtnShow = classifyTypeData.list[Object.keys(classifyTypeData.list)[0]].length <= 2
-      console.log(331133, classifyTypeData, this.classifyType, this.isclassifyTypeBtnShow)
 
       // 初始化账号选择插件数据
       const accountTypeData = await this.getDataList(dictType.ACCOUNT_TYPE)
@@ -361,7 +358,6 @@ export default {
       this.accountType = accountTypeData.texts
       // 设置选择插件添加按钮的初始显示状态
       this.isaccountTypeBtnShow = accountTypeData.list[Object.keys(accountTypeData.list)[0]].length <= 2
-      console.log(223311, accountTypeData, this.accountType, this.isaccountTypeBtnShow)
 
       // 初始化成员选择插件数据
       const memberTypeData = await this.getDataList(dictType.MEMBER_TYPE)

@@ -115,19 +115,22 @@ export default {
       userInfo: {},
       headerImgUrl: '',
       isLoadingShow: true,
-      isLoginLoadingShow: false
+      isLoginLoadingShow: false,
+      // 初次加载页面，onShow钩子不执行setData函数
+      isLoadingFlag: false
     }
   },
-  async onLoad () {
+  onLoad () {
     this.isLoadingShow = true
     wx.setNavigationBarTitle({
       title: '首页'
     })
-    await this.login()
+    this.login()
   },
   onShow () {
     // 初始化数据
-    this.setData()
+    if (this.isLoadingFlag) this.setData()
+    this.isLoadingFlag = true
   },
   // 下拉刷新事件
   onPullDownRefresh () {
@@ -188,6 +191,7 @@ export default {
       promise.then(res => {
         this.jsCode = res.res.code
         this.userInfo = res.userInfo
+        this.setData()
       }).catch(() => this.isLoadingShow = false)
     },
     async getUserInfo () {

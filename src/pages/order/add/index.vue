@@ -156,6 +156,7 @@ export default {
       })
     },
     getPayFormData (data, img) {
+      console.log(data)
       this.payFormData = data
       this.payImg = img
     },
