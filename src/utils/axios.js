@@ -6,8 +6,8 @@ import { localstorageKeys } from '@/utils/constants'
 Vue.use(Toast)
 
 axios.defaults.timeout = 60000 * 1 // 请求超时时间，默认5分钟
-const API = 'http://localhost:7001/api'
-// const API = 'https://mangoguang.cn/api'
+// const API = 'http://localhost:7001/api'
+const API = 'https://mangoguang.cn/api'
 // let baseLoadingConfig = {
 //   lock: true,
 //   fullscreen: true,
@@ -74,7 +74,6 @@ export default (
     //   ...options.loading
     // }
     const baseUrl = options.baseUrl || API
-    console.log('axios_token', wx.getStorageSync(localstorageKeys.TOKEN))
     const config = {
       method: type,
       url: `${baseUrl}${url}`,

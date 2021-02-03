@@ -1,19 +1,10 @@
 <template>
   <div class="order-add">
 
-    <!-- S 标题栏 -->
-    <!-- <van-nav-bar
-      title="记一笔"
-      left-text="返回"
-      left-arrow
-      @click-left="back"
-    /> -->
-    <!-- E 标题栏 -->
-
     <!-- S 内容部分 -->
     <van-tabs
       :color="titleLineColor"
-      @change="onClick"
+      @change="orderTypeChangeHandler"
       line-height="1px"
       swipeable
     >
@@ -22,6 +13,7 @@
         <order-add-form
           :orderType="0"
           @getFormData="getPayFormData"
+          ref="payForm"
         />
         <van-cell class="bottomBox">
           <van-button
@@ -37,6 +29,7 @@
         <order-add-form
           :orderType="1"
           @getFormData="getIncomeFormData"
+          ref="incomeForm"
         />
         <van-cell class="bottomBox">
           <van-button
@@ -53,6 +46,7 @@
     <!-- E 内容部分 -->
 
     <van-notify id="van-notify" />
+    <van-overlay :show="isLoadingShow" @click="hideLoading" class-name="loadingOverlay"><van-loading type="spinner" /></van-overlay>
 
   </div>
 </template>
@@ -74,7 +68,8 @@ export default {
       incomeFormData: null,
       payImg: null,
       incomeImg: null,
-      orderType: orderType.PAY
+      orderType: orderType.PAY,
+      isLoadingShow: false
     }
   },
   computed: {
@@ -86,6 +81,8 @@ export default {
     wx.setNavigationBarTitle({
       title: '记一笔'
     })
+    this.$refs.payForm.resetData()
+    this.$refs.incomeForm.resetData()
   },
   methods: {
 
@@ -94,17 +91,24 @@ export default {
      */
     async paySave () {
       if (this.key) {
+        this.isLoadingShow = true
         this.key = false
         if (!this.payFormData.money) {
           this.key = true
+          this.isLoadingShow = false
           return Notify({ type: 'warning', message: '请输入金额!' })
         }
 
         // 上传图片
         let imgUrl = null
         if (this.payImg) {
-          const res = await fetchFileUpload(this.payImg)
-          imgUrl = JSON.parse(res.data).data.url
+          fetchFileUpload(this.payImg).then(res => {
+            imgUrl = JSON.parse(res.data).data.url
+          }).catch(() => {
+            this.key = true
+            this.isLoadingShow = false
+            return Notify({ type: 'warning', message: '图片上传失败!' })
+          })
         }
 
         // 生成订单
@@ -126,16 +130,25 @@ export default {
      * 新增收入
      */
     async incomeSave () {
-      console.log(123123123123)
       if (this.key) {
+        this.isLoadingShow = true
         this.key = false
-        if (!this.incomeFormData.money) return Notify({ type: 'warning', message: '请输入金额!' })
+        if (!this.incomeFormData.money) {
+          this.key = true
+          this.isLoadingShow = false
+          return Notify({ type: 'warning', message: '图片上传失败!' })
+        }
 
         // 上传图片
         let imgUrl = null
         if (this.incomeImg) {
-          const res = await fetchFileUpload(this.incomeImg)
-          imgUrl = JSON.parse(res.data).data.url
+          fetchFileUpload(this.incomeImg).then(res => {
+            imgUrl = JSON.parse(res.data).data.url
+          }).catch(() => {
+            this.key = true
+            this.isLoadingShow = false
+            Notify({ type: 'warning', message: '新增失败！' })
+          })
         }
 
         const params = { ...this.incomeFormData, orderType: 1, imgUrl }
@@ -147,41 +160,39 @@ export default {
           }, 600)
         }).catch(() => {
           this.key = true
+          Notify({ type: 'warning', message: '新增失败！' })
         })
       }
     },
+
+    // 返回页面
     back () {
       wx.navigateBack({
         delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
       })
     },
+
+    // 获取支出表单数据
     getPayFormData (data, img) {
-      console.log(data)
       this.payFormData = data
       this.payImg = img
     },
+
+    // 获取收入表单数据
     getIncomeFormData (data, img) {
       this.incomeFormData = data
       this.incomeImg = img
     },
-    onClick (event) {
+
+    // 切换支出/收入表单
+    orderTypeChangeHandler (event) {
       this.orderType = event.target.name
     }
-    // async upload () {
-    //   const file = this.$refs.fileid.files[0]
-    //   const formData = new FormData()
-    //   formData.append('file', file)
-    //   const res = await fetchFileUpload(formData)
-    // }
   }
 }
 </script>
 
 <style lang="scss">
-// .bottomBox {
-//   position: fixed;
-//   bottom: 10;
-// }
 .pay {
   .money-input {
     font-size: 24px;

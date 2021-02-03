@@ -15,10 +15,14 @@ const fetchGetUserInfoByCode = (params) => axios('post', '/v1/users/getUserInfoB
 // 创建用户
 const fetchCreateUserByCode = (params) => axios('post', '/v1/users/createUserByCode', params)
 
+// 设置用户每月可用额度
+const fetchSetMonthQuota = (params) => axios('post', '/v1/users/setMonthQuota', params)
+
 export {
   fetchUserInfo,
   fetchUserCheck,
   fetchPayInfo,
   fetchGetUserInfoByCode,
-  fetchCreateUserByCode
+  fetchCreateUserByCode,
+  fetchSetMonthQuota
 }

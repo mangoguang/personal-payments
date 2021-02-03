@@ -3,100 +3,105 @@
 
     <!-- S 表单部分 -->
     <div>
-      <van-field
-        type="number"
-        maxlength="8"
-        :value="money"
-        @input="inputChange"
-        placeholder="0.00"
-        autofocus="true"
-        size="lager"
-        input-class="money-input"
-      >
-        <van-uploader
-          slot="button"
-          accept="image"
-          @afterRead="afterRead"
-          @oversize="oversize"
-          @delete="deleteImg"
-          :file-list="uploadImg"
-          :deletable="true"
-          preview-size="38px"
-          :max-count="1"
-          max-size="1024000"
-        />
-      </van-field>
-      <!-- /金额输入框 -->
+      <van-cell title-width="68vw" value=" " size="large">
+        <view slot="title">
+          <input
+            :value="money"
+            @input="moneyChange"
+            placeholder="0.00"
+            type="digit"
+            maxlength="10"
+            focus="true"
+            class="weui-input money-input"
+          />
+        </view>
+        <view slot="right-icon">
+          <van-uploader
+            class="upload"
+            accept="image"
+            @afterRead="afterRead"
+            @oversize="oversize"
+            @delete="deleteImg"
+            :file-list="uploadImg"
+            :deletable="true"
+            preview-size="76rpx"
+            :max-count="1"
+            max-size="10240000"
+          />
+        </view>
+      </van-cell>
 
-      <van-field
-        :value="classifyValue"
-        @click="selectClassifyType"
-        label="分类"
-        label-width="36px"
-        is-link
-        clickable
-        readonly
-        left-icon="like-o"
-      />
       <!-- /分类选择列表 -->
+      <van-cell title-width="68vw" value="分类" is-link>
+        <view slot="title">
+          <input
+            :value="classifyValue"
+            @click="selectClassifyType"
+            class="weui-input"
+            disabled
+          />
+        </view>
+      </van-cell>
 
-      <van-field
-        :value="accountType[1]"
-        @click="selectAccountType"
-        label="账户"
-        label-width="36px"
-        is-link
-        clickable
-        readonly
-        left-icon="like-o"
-      />
       <!-- /账户选择列表 -->
+      <van-cell title-width="68vw" value="账户" is-link>
+        <view slot="title">
+          <input
+            :value="accountType[1]"
+            @click="selectAccountType"
+            class="weui-input"
+            disabled
+          />
+        </view>
+      </van-cell>
 
-      <van-field
-        :value="changeTime"
-        @click="selectTime"
-        label="时间"
-        label-width="36px"
-        is-link
-        clickable
-        readonly
-        left-icon="like-o"
-      />
       <!-- /时间选择器 -->
+      <van-cell title-width="68vw" value="时间" is-link>
+        <view slot="title">
+          <input
+            :value="changeTime"
+            @click="selectTime"
+            class="weui-input"
+            disabled
+          />
+        </view>
+      </van-cell>
 
-      <van-field
-        :value="memberType[1]"
-        @click="selectMemberType"
-        label="成员"
-        label-width="36px"
-        is-link
-        clickable
-        readonly
-        left-icon="like-o"
-      />
       <!-- /成员选择列表 -->
+      <van-cell title-width="68vw" value="成员" is-link>
+        <view slot="title">
+          <input
+            :value="memberType[1]"
+            @click="selectMemberType"
+            class="weui-input"
+            disabled
+          />
+        </view>
+      </van-cell>
 
-      <van-field
-        :value="projectType[1]"
-        @click="selectProjectType"
-        label="项目"
-        label-width="36px"
-        is-link
-        clickable
-        readonly
-        left-icon="like-o"
-      />
-      <!-- /成员选择列表 -->
+      <!-- /项目选择列表 -->
+      <van-cell title-width="68vw" value="项目" is-link>
+        <view slot="title">
+          <input
+            :value="projectType[1]"
+            @click="selectProjectType"
+            class="weui-input"
+            disabled
+          />
+        </view>
+      </van-cell>
 
-      <van-field
-        :value="remark"
-        @change="remakeChange"
-        label="备注"
-        label-width="36px"
-        left-icon="like-o"
-        placeholder="..."
-      />
       <!-- /备注 -->
+      <van-cell title-width="68vw" value="备注" is-link>
+        <view slot="title">
+          <input
+            :value="remark"
+            @input="remakeChange"
+            class="weui-input"
+            placeholder="..."
+          />
+        </view>
+      </van-cell>
 
     </div>
     <!-- E 表单部分 -->
@@ -213,6 +218,10 @@
     </van-popup>
     <!-- E 时间选择器 -->
 
+    <van-notify id="van-notify" />
+    <!-- 用于压缩图片 -->
+    <canvas canvas-id="canvas" :style="{ width: cWidth + 'px', height: cHeight + 'px', position: 'absolute', left: '-2000px', top: '-2000px'}"></canvas>
+
   </div>
 </template>
 
@@ -220,7 +229,7 @@
 import { sendDateTime } from '@/utils/common'
 import { fetchDictList } from '@/api/common'
 import { dictType } from '@/utils/constants'
-import { Toast } from 'vant'
+import Notify from '@/../static/vant/notify/notify'
 export default {
   name: 'orderAddForm',
   props: {
@@ -261,7 +270,10 @@ export default {
       isclassifyTypeBtnShow: false,
       isaccountTypeBtnShow: false,
       ismemberTypeBtnShow: false,
-      isprojectTypeBtnShow: false
+      isprojectTypeBtnShow: false,
+      // 压缩后图片尺寸
+      cWidth: 0,
+      cHeight: 0
     }
   },
   computed: {
@@ -292,9 +304,6 @@ export default {
   onLoad () {
     this.setSelectData()
   },
-  onHide () {
-    this.resetData()
-  },
   methods: {
     resetData () {
       this.uploadImg = []
@@ -305,12 +314,11 @@ export default {
       this.remark = ''
       this.img = null
     },
-    inputChange (event) {
-      const value = event.mp.detail
-      this.money = value
+    moneyChange (e) {
+      this.money = e.target.value
     },
-    remakeChange (event) {
-      this.remark = event.mp.detail
+    remakeChange (e) {
+      this.remark = e.target.value
     },
     /**
      * 获取数据字典数据，并返回选择器所需数据
@@ -320,19 +328,37 @@ export default {
       const res = await fetchDictList(type)
       if (!res.length) return
       const list = []
-      const texts = [res[0].dictName, res[0].childs[0].dictName]
+      let texts = [res[0].dictName, res[0].childs[0].dictName]
       res.forEach(item => {
         list[item.dictName] = Array.from(item.childs.map(temp => temp.dictName))
       })
-      const columns = [{
+      let columns = [{
         values: Object.keys(list),
         className: 'column1'
       },
       {
         values: list[res[0].dictName],
-        className: 'column2',
-        defaultIndex: 0
+        className: 'column2'
       }]
+      // 对不同picker插件设置默认值
+      switch (type) {
+        case dictType.ACCOUNT_TYPE:
+          if (this.orderType === 1) {
+            // 收入
+            columns[1].values = list[res[2].dictName]
+            columns[0].defaultIndex = 2
+            columns[1].defaultIndex = 0
+            texts = [res[2].dictName, res[2].childs[0].dictName] // 默认金融账户-银行卡
+          } else {
+            columns[1].values = list[res[3].dictName]
+            columns[0].defaultIndex = 3
+            columns[1].defaultIndex = 2
+            texts = [res[3].dictName, res[3].childs[2].dictName] // 默认虚拟账户-现金
+          }
+          break
+        default:
+          break
+      }
       return { texts, list, columns }
     },
 
@@ -369,7 +395,7 @@ export default {
       // 初始化项目选择插件数据
       const projectTypeData = await this.getDataList(dictType.PROJECT_TYPE)
       this.setData(projectTypeData, 'projectType')
-      this.projectType = []
+      this.projectType = projectTypeData.texts
       // 设置成员选择插件添加按钮的初始显示状态
       this.isprojectTypeBtnShow = projectTypeData.list[Object.keys(projectTypeData.list)[0]].length <= 2
     },
@@ -391,23 +417,53 @@ export default {
       this[`${type}Columns`] = temp
     },
 
-    /**
-     * 格式化输入金额
-     */
-    // filterMoney (value) {
-    //   if (!value) return ''
-    //   const num = +value
-    //   return num.toFixed(2)
-    // },
     async afterRead (event) {
+      let _this = this
       const imgUrl = event.target.file.url
-      this.uploadImg.push({ url: imgUrl, name: 'picture' })
-      // const res = await fetchFileUpload(imgUrl)
-      // this.img = JSON.parse(res.data).data.url
-      this.img = imgUrl
+      // 根据图片链接获取图片尺寸
+      wx.getImageInfo({
+        src: imgUrl,
+        success: function (res) {
+          let width = res.width
+          let height = res.height
+          // 计算图片尺寸，宽度设置在500～750之间
+          while (width > 750) {
+            if (width > 1000) {
+              width = Math.floor(width / 2)
+              height = Math.floor(height / 2)
+            } else {
+              width = Math.floor(width / 1.5)
+              height = Math.floor(height / 1.5)
+            }
+          }
+          _this.cWidth = width
+          _this.cHeight = height
+          _this.createScreenCanvas(imgUrl, width, height)
+        }
+      })
+    },
+    // 生成压缩图片
+    createScreenCanvas (imgUrl, canvasWidth, canvasHeight) {
+      let _this = this
+      var ctx = wx.createCanvasContext('canvas')
+      ctx.drawImage(imgUrl, 0, 0, canvasWidth, canvasHeight)
+      ctx.draw(false, setTimeout(function () {
+        wx.canvasToTempFilePath({
+          canvasId: 'canvas',
+          destWidth: canvasWidth,
+          destHeight: canvasHeight,
+          success: function (res) {
+            _this.img = res.tempFilePath
+            _this.uploadImg.push({ url: imgUrl, name: 'picture' })
+          },
+          fail: function (res) {
+            console.log('图片信息错误', res.errMsg)
+          }
+        })
+      }, 100))
     },
     oversize () {
-      Toast.fail('上传图片不能超过1M')
+      Notify({ type: 'success', message: '上传图片不能超过1M！' })
     },
     deleteImg (e) {
       const index = e.mp.detail.index
@@ -464,7 +520,6 @@ export default {
       this.isProjectTypePickerShow = false
     },
     addSelect (dictType) {
-      console.log(11112222)
       wx.navigateTo({ url: `/pages/dictionary/main?dictType=${dictType}` })
     }
   }
@@ -472,9 +527,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.img {
-  width: 38px;
-  height: 38px;
+.money-container {
+  padding: 10px 16px;
+}
+.money-input {
+  height: 76rpx;
+  color: #07c160;
 }
 .datePicker {
   position: absolute;
@@ -482,12 +540,15 @@ export default {
   bottom: 0;
   width: 100vw;
 }
-.order-add-form {
-  /deep/ .van-uploader__upload {
-    width: 38px;
-    height: 38px;
-  }
-}
+// .order-add-form {
+//   /deep/ .van-uploader__upload {
+//     margin: 0;
+//   }
+//   /deep/ .van-uploader__preview {
+//     margin: 0!important;
+//     overflow: hidden;
+//   }
+// }
 .add-select-btn{
   position: absolute;
   right: 0;
