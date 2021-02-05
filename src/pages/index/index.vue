@@ -95,7 +95,7 @@
 
     <van-button @click="add" size="normal" class="add" type="primary">记一笔</van-button>
 
-    <van-overlay :show="isLoadingShow" @click="hideLoading" class-name="loadingOverlay"><van-loading type="spinner" /></van-overlay>
+    <page-loading :show="isLoadingShow" @hideLoading="hideLoading" />
     <van-overlay :show="isLoginLoadingShow" @click="hideLoading" class-name="loadingOverlay"><van-loading type="spinner" />登陆中...</van-overlay>
     <van-notify id="van-notify" />
 
@@ -128,10 +128,13 @@
 <script>
 import { fetchPayInfo, fetchGetUserInfoByCode, fetchCreateUserByCode, fetchSetMonthQuota } from '@/api/users'
 import { timeInterval, weappInfo, localstorageKeys } from '@/utils/constants'
+import PageLoading from '@/components/common/loading'
 import { sendDateTime, uuid } from '@/utils/common'
 import Notify from '@/../static/vant/notify/notify'
 
 export default {
+  name: 'Home',
+  components: { PageLoading },
   data () {
     return {
       active: 'water',
@@ -305,12 +308,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/ ._van-loading {
-  position: absolute;
-  top: 50%;
-  left:50%;
-  transform: translate(-50%,-50%);
-}
 .home {
   display: flex;
   flex-direction: column;

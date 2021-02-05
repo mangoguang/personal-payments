@@ -46,7 +46,7 @@
     <!-- E 内容部分 -->
 
     <van-notify id="van-notify" />
-    <van-overlay :show="isLoadingShow" @click="hideLoading" class-name="loadingOverlay"><van-loading type="spinner" /></van-overlay>
+    <page-loading :show="isLoadingShow" @hideLoading="hideLoading" />
 
   </div>
 </template>
@@ -55,12 +55,13 @@
 import OrderAddForm from '@/components/order/AddForm'
 import { fetchAddOrder } from '@/api/order'
 import { fetchFileUpload } from '@/api/common'
+import PageLoading from '@/components/common/loading'
 import Notify from '@/../static/vant/notify/notify'
 import { orderType } from '@/utils/constants'
 
 export default {
   name: 'OrderAdd',
-  components: { OrderAddForm },
+  components: { OrderAddForm, PageLoading },
   data () {
     return {
       key: true,
@@ -90,7 +91,9 @@ export default {
      * 新增支出
      */
     async paySave () {
+      console.log(1)
       if (this.key) {
+        console.log(2)
         this.isLoadingShow = true
         this.key = false
         if (!this.payFormData.money) {
@@ -98,31 +101,38 @@ export default {
           this.isLoadingShow = false
           return Notify({ type: 'warning', message: '请输入金额!' })
         }
-
+        console.log(3)
         // 上传图片
         let imgUrl = null
+
+        // 生成支出订单
+        const createPayOrder = (imgUrl) => {
+          const params = { ...this.payFormData, orderType: 0, imgUrl }
+          fetchAddOrder(params).then(() => {
+            this.key = true
+            Notify({ type: 'success', message: '新增成功！' })
+            this.isLoadingShow = false
+            setTimeout(() => {
+              this.back()
+            }, 600)
+          }).catch(() => {
+            Notify({ type: 'warning', message: '新增失败！' })
+            this.isLoadingShow = false
+            this.key = true
+          })
+        }
+
         if (this.payImg) {
           fetchFileUpload(this.payImg).then(res => {
             imgUrl = JSON.parse(res.data).data.url
+            createPayOrder(imgUrl)
           }).catch(() => {
             this.key = true
             this.isLoadingShow = false
             return Notify({ type: 'warning', message: '图片上传失败!' })
           })
         }
-
-        // 生成订单
-        const params = { ...this.payFormData, orderType: 0, imgUrl }
-        fetchAddOrder(params).then(() => {
-          this.key = true
-          Notify({ type: 'success', message: '新增成功！' })
-          setTimeout(() => {
-            this.back()
-          }, 600)
-        }).catch(() => {
-          Notify({ type: 'warning', message: '新增失败！' })
-          this.key = true
-        })
+        createPayOrder(imgUrl)
       }
     },
 
@@ -136,14 +146,22 @@ export default {
         if (!this.incomeFormData.money) {
           this.key = true
           this.isLoadingShow = false
-          return Notify({ type: 'warning', message: '图片上传失败!' })
+          return Notify({ type: 'warning', message: '请输入金额!' })
         }
 
         // 上传图片
         let imgUrl = null
-        if (this.incomeImg) {
-          fetchFileUpload(this.incomeImg).then(res => {
-            imgUrl = JSON.parse(res.data).data.url
+
+        const createIncomeOrder = (imgUrl) => {
+          // 生成订单
+          const params = { ...this.incomeFormData, orderType: 1, imgUrl }
+          fetchAddOrder(params).then(() => {
+            this.key = true
+            Notify({ type: 'success', message: '新增成功!' })
+            this.isLoadingShow = false
+            setTimeout(() => {
+              this.back()
+            }, 600)
           }).catch(() => {
             this.key = true
             this.isLoadingShow = false
@@ -151,17 +169,17 @@ export default {
           })
         }
 
-        const params = { ...this.incomeFormData, orderType: 1, imgUrl }
-        fetchAddOrder(params).then(() => {
-          this.key = true
-          Notify({ type: 'success', message: '新增成功!' })
-          setTimeout(() => {
-            this.back()
-          }, 600)
-        }).catch(() => {
-          this.key = true
-          Notify({ type: 'warning', message: '新增失败！' })
-        })
+        if (this.incomeImg) {
+          fetchFileUpload(this.incomeImg).then(res => {
+            imgUrl = JSON.parse(res.data).data.url
+            createIncomeOrder(imgUrl)
+          }).catch(() => {
+            this.key = true
+            this.isLoadingShow = false
+            Notify({ type: 'warning', message: '新增失败！' })
+          })
+        }
+        createIncomeOrder(imgUrl)
       }
     },
 

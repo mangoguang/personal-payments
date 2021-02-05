@@ -1,10 +1,10 @@
 <template>
-  <van-overlay :show="show" @click="hideLoading"><van-loading type="spinner" /></van-overlay>
+  <van-overlay :show="show" @click="hideLoading" class-name="loadingOverlay"><van-loading custom-class="pageLoading" type="spinner" /></van-overlay>
 </template>
 
 <script>
 export default {
-  name: 'loading',
+  name: 'Loading',
   props: {
     show: {
       type: Boolean,
@@ -12,9 +12,12 @@ export default {
       require: true
     }
   },
+  created () {
+    console.log('11223311, ', this.show)
+  },
   methods: {
     hideLoading () {
-
+      this.$isPageLoadingShow = true
     }
   }
 }
