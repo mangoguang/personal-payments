@@ -311,6 +311,7 @@ export default {
       this.memberType = ''
       this.projectType = ''
       this.currentDate = +new Date()
+      this.changeTime = sendDateTime(new Date(), 'yyyy/MM/dd hh:mm:ss')
       this.remark = ''
       this.img = null
     },

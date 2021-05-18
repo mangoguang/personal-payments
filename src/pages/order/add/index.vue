@@ -91,9 +91,7 @@ export default {
      * 新增支出
      */
     async paySave () {
-      console.log(1)
       if (this.key) {
-        console.log(2)
         this.isLoadingShow = true
         this.key = false
         if (!this.payFormData.money) {
@@ -101,7 +99,6 @@ export default {
           this.isLoadingShow = false
           return Notify({ type: 'warning', message: '请输入金额!' })
         }
-        console.log(3)
         // 上传图片
         let imgUrl = null
 
@@ -131,8 +128,9 @@ export default {
             this.isLoadingShow = false
             return Notify({ type: 'warning', message: '图片上传失败!' })
           })
+        } else {
+          createPayOrder(imgUrl)
         }
-        createPayOrder(imgUrl)
       }
     },
 

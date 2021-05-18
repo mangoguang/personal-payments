@@ -24,6 +24,7 @@
         <van-cell
           title-class="detail-list-left"
           :value-class="parseInt(detail.orderType) ? 'income-text' : 'pay-text'"
+          @click="() => toDetail(detail.id)"
         >
           <view slot="title">
             <van-row>{{ detail.levelTwoName }}</van-row>
@@ -55,6 +56,11 @@ export default {
     },
     fatherIndex: {
       type: Number
+    }
+  },
+  methods: {
+    toDetail (id) {
+      wx.navigateTo({ url: `/pages/order/detail/main?id=${id}` })
     }
   }
 }

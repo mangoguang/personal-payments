@@ -6,8 +6,17 @@ import { localstorageKeys } from '@/utils/constants'
 Vue.use(Toast)
 
 axios.defaults.timeout = 60000 * 1 // 请求超时时间，默认5分钟
-const API = 'http://localhost:7001/api'
-// const API = 'https://mangoguang.cn/api'
+const ENV = 'dev'
+let [PublicPath, BaseUrl] = ['', '']
+if (ENV === 'dev') {
+  PublicPath = 'http://localhost:7001'
+  BaseUrl = 'http://localhost:7001'
+} else {
+  PublicPath = 'http://mangoguang.cn:8888'
+  BaseUrl = 'https://mangoguang.cn'
+}
+
+const API = `${BaseUrl}/api`
 // let baseLoadingConfig = {
 //   lock: true,
 //   fullscreen: true,
@@ -138,4 +147,4 @@ const wechatUpload = (url, filePath) => {
   })
 }
 
-export { wechatUpload }
+export { wechatUpload, PublicPath }

@@ -1,8 +1,11 @@
 {
   "pages": [
     "pages/index/main",
+    "pages/mahjong/add/main",
+    "pages/mahjong/main",
     "pages/order/recordList/main",
     "pages/order/add/main",
+    "pages/order/detail/main",
     "pages/dictionary/main",
     "pages/logs/main",
     "pages/counter/main",
@@ -27,8 +30,8 @@
       "iconPath": "static/tabs/home.png",
       "selectedIconPath": "static/tabs/home-active.png"
     }, {
-      "text": "订单",
-      "pagePath": "pages/logs/main",
+      "text": "牌局",
+      "pagePath": "pages/mahjong/main",
       "iconPath": "static/tabs/orders.png",
       "selectedIconPath": "static/tabs/orders-active.png"
     }, {
@@ -81,6 +84,7 @@
     "van-loading": "/static/vant/loading/index",
     "van-dropdown-menu": "/static/vant/dropdown-menu/index",
     "van-dropdown-item": "/static/vant/dropdown-item/index",
-    "van-icon": "/static/vant/icon/index"
+    "van-icon": "/static/vant/icon/index",
+    "van-grid": "/static/vant/grid/index"
   }
 }

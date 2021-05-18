@@ -16,11 +16,11 @@
       <button v-else class="btn" open-type="getUserInfo" @getuserinfo="getUserInfo">登陆</button>
       <van-row class="pay">
         <van-col>{{month}}</van-col>
-        <van-col>月•支出</van-col>
+        <van-col>月•支1出</van-col>
         <van-col><strong>{{payInfo.monthPay}}</strong></van-col>
       </van-row>
       <van-col class="bottom">
-        <van-row v-if="payInfo.monthQuota">本月可用<span class="pay-text"> {{payInfo.monthQuota - payInfo.monthPay}}</span><van-icon @click="showMonthQuotaDialog" color="#07c160" name="edit" size="32rpx" /></van-row>
+        <van-row v-if="payInfo.monthQuota">本月可用<span class="pay-text"> {{ canPay }}</span><van-icon @click="showMonthQuotaDialog" color="#07c160" name="edit" size="32rpx" /></van-row>
         <van-row v-else><span>可用额度</span><van-icon @click="showMonthQuotaDialog" name="edit" size="32rpx" /></van-row>
         <van-row>本月收入<span class="income-text"> {{ payInfo.monthIncome }}</span></van-row>
       </van-col>
@@ -151,6 +151,11 @@ export default {
       isLoadingFlag: false,
       isMonthQuotaDialogShow: false,
       img: ''
+    }
+  },
+  computed: {
+    canPay: function () {
+      return (this.payInfo.monthQuota - this.payInfo.monthPay).toFixed(2)
     }
   },
   onLoad () {
